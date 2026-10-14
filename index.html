@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Vector Hub - Jersey Showcase</title>
+    <title>Free Vector Hub - Jersey Showcase & Admin</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -35,13 +35,17 @@
                 <button onclick="filterCategory('Premium')" class="nav-btn text-amber-400 font-semibold flex items-center"><i class="fa-solid fa-crown mr-1"></i> Premium</button>
             </nav>
 
-            <!-- User Auth -->
-            <div class="flex items-center space-x-4">
+            <!-- Admin & User Auth -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Admin Upload
+                </button>
+                
                 <div id="auth-container">
-                    <button id="login-btn" onclick="loginWithGoogle()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center shadow-lg shadow-indigo-600/20">
-                        <i class="fa-brands fa-google mr-2"></i> Sign In
+                    <button id="login-btn" onclick="loginWithGoogle()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center shadow-lg shadow-indigo-600/20">
+                        <i class="fa-brands fa-google mr-1.5"></i> Sign In
                     </button>
-                    <div id="user-profile" class="hidden items-center space-x-3">
+                    <div id="user-profile" class="hidden items-center space-x-2">
                         <img id="user-avatar" src="" alt="User" class="w-8 h-8 rounded-full border border-indigo-500">
                         <button onclick="logout()" class="text-slate-400 hover:text-rose-400 text-sm transition" title="Sign Out">
                             <i class="fa-solid fa-right-from-bracket"></i>
@@ -57,9 +61,8 @@
         <span>Advertisement Space (Google AdSense Responsive Banner)</span>
     </div>
 
-    <!-- MAIN GALLERY GRID (Clean Pinterest-style grid as requested) -->
+    <!-- MAIN GALLERY GRID -->
     <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-        <!-- Jersey Grid -->
         <div id="jersey-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
             <!-- Dynamic Image Cards Loaded via JS -->
         </div>
@@ -75,83 +78,74 @@
         <p>&copy; 2026 FreeVectorHub. All rights reserved.</p>
     </footer>
 
-    <!-- MODAL: DESIGN DETAILS PAGE (Opened on Image Click) -->
+    <!-- MODAL: DESIGN DETAILS PAGE -->
     <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition z-10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <div id="modal-content" class="p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
-                <!-- Content Injected via JS -->
-            </div>
+            <div id="modal-content" class="p-6 sm:p-8 max-h-[90vh] overflow-y-auto"></div>
         </div>
     </div>
 
-    <!-- FIREBASE AUTHENTICATION MODULE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    <!-- MODAL: ADMIN UPLOAD PANEL -->
+    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative p-6">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-cloud-arrow-up text-indigo-400 mr-2"></i> Admin Upload Panel</h3>
+            <p class="text-xs text-slate-400 mb-4">Add a new jersey or vector design to your homepage instantly.</p>
+            
+            <form onsubmit="handleAdminUpload(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Design Title</label>
+                    <input type="text" id="admin-title" placeholder="e.g. Neon Black Dragon Kit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                        <select id="admin-category" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="Football">Football</option>
+                            <option value="Cricket">Cricket</option>
+                            <option value="Esports">Esports</option>
+                            <option value="Volleyball">Volleyball</option>
+                            <option value="Polo">Polo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Design Type</label>
+                        <select id="admin-type" onchange="togglePriceField()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="Free">Free</option>
+                            <option value="Premium">Premium (Paid)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="price-box" class="hidden">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Price (e.g. $4.99)</label>
+                    <input type="text" id="admin-price" value="$4.99" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Image URL (Direct Image Link)</label>
+                    <input type="url" id="admin-image" placeholder="https://images.unsplash.com/... or your image link" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
+                    <textarea id="admin-desc" rows="2" placeholder="Brief description of layers, format, and details..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Tags (Comma separated)</label>
+                    <input type="text" id="admin-tags" placeholder="Football, Neon, Vector, Kit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg mt-2">
+                    Publish Design to Site
+                </button>
+            </form>
+        </div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForDemoPurposesOnly12345",
-            authDomain: "freevectorhub.firebaseapp.com",
-            projectId: "freevectorhub",
-            storageBucket: "freevectorhub.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:123456:web:abcdef"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        window.loginWithGoogle = function() {
-            signInWithPopup(auth, provider).catch(() => {
-                simulateLogin({
-                    displayName: "Alex",
-                    photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
-                });
-            });
-        };
-
-        window.logout = function() {
-            signOut(auth).then(() => {
-                localStorage.removeItem('simulated_user');
-                updateUI(null);
-            });
-        };
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) updateUI(user);
-            else {
-                const saved = localStorage.getItem('simulated_user');
-                updateUI(saved ? JSON.parse(saved) : null);
-            }
-        });
-
-        function simulateLogin(userObj) {
-            localStorage.setItem('simulated_user', JSON.stringify(userObj));
-            updateUI(userObj);
-        }
-
-        function updateUI(user) {
-            const loginBtn = document.getElementById('login-btn');
-            const profileDiv = document.getElementById('user-profile');
-            if (user) {
-                loginBtn.classList.add('hidden');
-                profileDiv.classList.remove('hidden');
-                profileDiv.classList.add('flex');
-                document.getElementById('user-avatar').src = user.photoURL;
-            } else {
-                loginBtn.classList.remove('hidden');
-                profileDiv.classList.add('hidden');
-            }
-        }
-    </script>
-
-    <!-- DATA & LOGIC -->
+    <!-- SCRIPT LOGIC -->
     <script>
-        const jerseys = [
+        // Initial Default Jerseys Database (Saved to localStorage for persistence)
+        const defaultJerseys = [
             {
                 id: 1,
                 title: "Gold & Black Luxury Football Kit",
@@ -184,26 +178,6 @@
             },
             {
                 id: 4,
-                title: "Orange Sunrisers Cricket Concept",
-                category: "Cricket",
-                type: "Free",
-                price: "Free",
-                image: "https://images.unsplash.com/photo-1519766304817-4f37bda74a26?w=600",
-                description: "Vibrant orange and black cricket tournament team jersey design template.",
-                tags: ["Cricket", "Orange", "Tournament"]
-            },
-            {
-                id: 5,
-                title: "Polynesian Tribal Pattern Polo Jersey",
-                category: "Polo",
-                type: "Premium",
-                price: "$6.99",
-                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
-                description: "Detailed cultural Polynesian tribal tattoo pattern jersey design with collar vector mockups.",
-                tags: ["Polo", "Tribal", "Pattern", "Culture"]
-            },
-            {
-                id: 6,
                 title: "Royal Blue Liquid Water Esports Jersey",
                 category: "Esports",
                 type: "Premium",
@@ -211,44 +185,24 @@
                 image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600",
                 description: "High-tech gaming jersey pattern featuring wave energy graphics and sponsor branding areas.",
                 tags: ["Esports", "Blue", "Water", "Gaming"]
-            },
-            {
-                id: 7,
-                title: "Neon Dragon Green Sports Uniform",
-                category: "Football",
-                type: "Free",
-                price: "Free",
-                image: "https://images.unsplash.com/photo-1518063319789-7217ed6e297f?w=600",
-                description: "Aggressive dragon theme sports concept design in neon lime green and deep black.",
-                tags: ["Dragon", "Green", "Football"]
-            },
-            {
-                id: 8,
-                title: "Purple Lightning Esports Gaming Polo",
-                category: "Esports",
-                type: "Premium",
-                price: "$5.99",
-                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
-                description: "Electric lightning vector design bundle. Perfect for streaming teams and esports tournaments.",
-                tags: ["Lightning", "Purple", "Esports"]
             }
         ];
+
+        // Load items from localStorage if available, else use default
+        let jerseys = JSON.parse(localStorage.getItem('admin_jerseys')) || defaultJerseys;
 
         function renderJerseys(items) {
             const grid = document.getElementById('jersey-grid');
             grid.innerHTML = items.map(j => `
                 <div onclick="openModal(${j.id})" class="relative group cursor-pointer overflow-hidden rounded-2xl bg-slate-900 border border-slate-800/80 hover:border-indigo-500/60 transition duration-300 shadow-md aspect-[4/5]">
-                    <!-- Image Only in Homepage -->
                     <img src="${j.image}" alt="${j.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     
-                    <!-- Paid / Premium Crown Icon Overlay (As shown in image) -->
                     ${j.type === 'Premium' ? `
                         <div class="absolute top-2.5 right-2.5 bg-slate-900/85 backdrop-blur-md p-1.5 px-2 rounded-lg border border-amber-500/40 shadow-lg text-amber-400 text-xs font-bold flex items-center">
                             <i class="fa-solid fa-crown text-amber-400"></i>
                         </div>
                     ` : ''}
 
-                    <!-- Slight dark overlay on hover -->
                     <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300"></div>
                 </div>
             `).join('');
@@ -279,24 +233,22 @@
                         <div class="flex items-center space-x-2 mb-2">
                             <span class="bg-indigo-500/10 text-indigo-400 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-500/20">${j.category}</span>
                         </div>
-                        <h2 class="text-2xl font-bold text-white">${j.title}</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">${j.title}</h2>
                         <p class="text-slate-300 text-xs sm:text-sm mt-3 leading-relaxed">${j.description}</p>
                         
-                        <!-- Tags -->
                         <div class="mt-4 flex flex-wrap gap-2">
-                            ${j.tags.map(t => `<span class="bg-slate-800 text-slate-400 text-xs px-2.5 py-1 rounded-lg">#${t}</span>`).join('')}
+                            ${(j.tags || []).map(t => `<span class="bg-slate-800 text-slate-400 text-xs px-2.5 py-1 rounded-lg">#${t}</span>`).join('')}
                         </div>
 
-                        <!-- Price & Download / Buy Section -->
                         <div class="mt-8 pt-5 border-t border-slate-800 flex items-center justify-between">
                             <div>
                                 <span class="text-xs text-slate-400 block">License / Price</span>
-                                <span class="text-xl font-extrabold ${j.type === 'Premium' ? 'text-amber-400' : 'text-emerald-400'}">${j.price}</span>
+                                <span class="text-xl font-extrabold ${j.type === 'Premium' ? 'text-amber-400' : 'text-emerald-400'}">${j.type === 'Premium' ? j.price : 'Free'}</span>
                             </div>
                             <div>
                                 ${j.type === 'Premium' 
-                                    ? `<button onclick="alert('Redirecting to payment gateway...')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition shadow-lg flex items-center text-sm"><i class="fa-solid fa-cart-shopping mr-2"></i> Buy & Download</button>`
-                                    : `<button onclick="alert('Download started!')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl transition shadow-lg flex items-center text-sm"><i class="fa-solid fa-download mr-2"></i> Download Vector</button>`
+                                    ? `<button onclick="alert('Redirecting to secure payment checkout...')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition shadow-lg flex items-center text-xs"><i class="fa-solid fa-cart-shopping mr-2"></i> Buy & Download</button>`
+                                    : `<button onclick="alert('Download started successfully!')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl transition shadow-lg flex items-center text-xs"><i class="fa-solid fa-download mr-2"></i> Download Vector</button>`
                                 }
                             </div>
                         </div>
@@ -310,7 +262,81 @@
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
-        // Initial Load
+        // Admin Modal Controls
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function togglePriceField() {
+            const type = document.getElementById('admin-type').value;
+            const priceBox = document.getElementById('price-box');
+            if (type === 'Premium') priceBox.classList.remove('hidden');
+            else priceBox.classList.add('hidden');
+        }
+
+        function handleAdminUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('admin-title').value;
+            const category = document.getElementById('admin-category').value;
+            const type = document.getElementById('admin-type').value;
+            const price = type === 'Premium' ? document.getElementById('admin-price').value : 'Free';
+            const image = document.getElementById('admin-image').value;
+            const description = document.getElementById('admin-desc').value;
+            const tags = document.getElementById('admin-tags').value.split(',').map(t => t.trim());
+
+            const newJersey = {
+                id: Date.now(),
+                title,
+                category,
+                type,
+                price,
+                image,
+                description,
+                tags
+            };
+
+            jerseys.unshift(newJersey); // Add to beginning of array
+            localStorage.setItem('admin_jerseys', JSON.stringify(jerseys)); // Save to local storage
+
+            renderJerseys(jerseys);
+            closeAdminModal();
+            e.target.reset();
+            alert("New design published successfully!");
+        }
+
+        // Google Auth Simulation
+        window.loginWithGoogle = function() {
+            const userObj = { displayName: "Admin User", photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" };
+            localStorage.setItem('simulated_user', JSON.stringify(userObj));
+            updateAuthUI(userObj);
+        };
+
+        window.logout = function() {
+            localStorage.removeItem('simulated_user');
+            updateAuthUI(null);
+        };
+
+        function updateAuthUI(user) {
+            if (user) {
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('user-profile').classList.remove('hidden');
+                document.getElementById('user-profile').classList.add('flex');
+                document.getElementById('user-avatar').src = user.photoURL;
+            } else {
+                document.getElementById('login-btn').classList.remove('hidden');
+                document.getElementById('user-profile').classList.add('hidden');
+            }
+        }
+
+        // Check login on load
+        const savedUser = localStorage.getItem('simulated_user');
+        if (savedUser) updateAuthUI(JSON.parse(savedUser));
+
+        // Initial Render
         renderJerseys(jerseys);
     </script>
 </body>
