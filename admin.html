@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - VectorHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="data.js"></script>
+</head>
+<body class="bg-slate-900 text-gray-800 min-h-screen flex items-center justify-center p-4">
+
+  <!-- PASSWORD LOGIN MODAL -->
+  <div id="loginBox" class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+    <div class="text-center mb-6">
+      <i class="fa-solid fa-lock text-4xl text-yellow-500 mb-2"></i>
+      <h2 class="text-2xl font-bold text-slate-800">Admin Login</h2>
+      <p class="text-sm text-gray-500">Enter password to access upload panel</p>
+    </div>
+    <form onsubmit="checkPassword(event)">
+      <input type="password" id="adminPass" placeholder="Enter Password" class="w-full p-3 border rounded-xl mb-4 focus:ring-2 focus:ring-yellow-400 outline-none text-center text-lg">
+      <button type="submit" class="w-full bg-slate-900 text-yellow-400 py-3 rounded-xl font-bold hover:bg-slate-800 transition">Unlock Panel</button>
+    </form>
+  </div>
+
+  <!-- ADMIN UPLOAD PANEL -->
+  <div id="adminPanel" class="hidden bg-white w-full max-w-3xl p-6 rounded-2xl shadow-2xl my-8">
+    <div class="flex justify-between items-center border-b pb-3 mb-6">
+      <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-yellow-500"></i> Add New Design</h2>
+      <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900"><i class="fa-solid fa-house"></i> Go to Home</a>
+    </div>
+
+    <form onsubmit="handleUpload(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-1">Design Title</label>
+        <input type="text" id="title" required placeholder="Ex: Sri Lanka Sublimation Cricket Jersey" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <!-- DESCRIPTION FIELD -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-1">Description (விளக்கம்)</label>
+        <textarea id="description" rows="3" placeholder="Enter design details, resolution, features..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"></textarea>
+      </div>
+
+      <!-- MULTIPLE CATEGORIES -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-2">Select Categories (Multiple Choice)</label>
+        <div class="flex flex-wrap gap-4 bg-gray-50 p-3 rounded-lg border">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Jersey" class="w-4 h-4 text-yellow-500 rounded"> Jersey</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Vector" class="w-4 h-4 text-yellow-500 rounded"> Vector</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Logo" class="w-4 h-4 text-yellow-500 rounded"> Logo</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Cricket" class="w-4 h-4 text-yellow-500 rounded"> Cricket</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Football" class="w-4 h-4 text-yellow-500 rounded"> Football</label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Type</label>
+        <select id="type" onchange="togglePriceInput()" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+          <option value="Free">Free</option>
+          <option value="Paid">Paid</option>
+        </select>
+      </div>
+
+      <div id="priceContainer" class="hidden">
+        <label class="block text-sm font-semibold mb-1">Price (USD)</label>
+        <input type="number" id="price" step="0.01" placeholder="Ex: 2.99" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Preview Image URL</label>
+        <input type="url" id="imageUrl" required placeholder="https://example.com/image.jpg" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Downloadable File Link (Drive/ZIP)</label>
+        <input type="url" id="fileUrl" required placeholder="Google Drive / Cloud link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <div class="md:col-span-2 flex justify-end gap-2 mt-4">
+        <button type="submit" class="w-full py-3 bg-yellow-500 text-slate-900 rounded-xl font-bold hover:bg-yellow-400 shadow text-base">Save & Publish Design</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const SECRET_PASSWORD = "admin123"; // உங்கள் கடவுச்சொல்
+
+    function checkPassword(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPass').value;
+      if (pass === SECRET_PASSWORD) {
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+      } else {
+        alert("Incorrect Password!");
+      }
+    }
+
+    function togglePriceInput() {
+      const type = document.getElementById('type').value;
+      document.getElementById('priceContainer').classList.toggle('hidden', type !== 'Paid');
+    }
+
+    function handleUpload(e) {
+      e.preventDefault();
+      const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+
+      if (selectedCategories.length === 0) {
+        alert('Please select at least one category!');
+        return;
+      }
+
+      const newDesign = {
+        id: Date.now(),
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        categories: selectedCategories,
+        type: document.getElementById('type').value,
+        price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
+        imageUrl: document.getElementById('imageUrl').value,
+        fileUrl: document.getElementById('fileUrl').value
+      };
+
+      const currentDesigns = getDesigns();
+      currentDesigns.unshift(newDesign);
+      saveDesigns(currentDesigns);
+
+      alert('Design Published Successfully!');
+      location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
