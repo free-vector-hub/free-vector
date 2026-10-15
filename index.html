@@ -1,430 +1,242 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ta">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Vector Hub - Jersey & Vector Showcase</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VectorHub - Sports Jersey & Vector Designs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-gray-50 text-gray-800" onhashchange="handleRoute()">
 
-    <!-- HEADER / NAVIGATION -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-            <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="goHome()">
-                <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold text-xl">
-                    <i class="fa-solid fa-shirt"></i>
-                </div>
-                <span class="text-lg sm:text-xl font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">FreeVectorHub</span>
-            </div>
-            
-            <!-- Global Search Bar in Header -->
-            <div class="flex-grow max-w-md hidden sm:block relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-500"></i>
-                <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Search jerseys by title, category, or tags (#gold, #neon)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
-            </div>
+  <!-- NAVBAR -->
+  <nav class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      
+      <!-- Logo -->
+      <a href="#" onclick="changeRoute('all')" class="text-2xl font-bold text-yellow-400 flex items-center gap-2">
+        <i class="fa-solid fa-vector-square"></i> VectorHub
+      </a>
 
-            <!-- Admin & User Auth -->
-            <div class="flex items-center space-x-3 shrink-0">
-                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center">
-                    <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Admin Upload
-                </button>
-                
-                <div id="auth-container">
-                    <button id="login-btn" onclick="loginWithGoogle()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center shadow-lg shadow-indigo-600/20">
-                        <i class="fa-brands fa-google mr-1.5"></i> Sign In
-                    </button>
-                    <div id="user-profile" class="hidden items-center space-x-2">
-                        <img id="user-avatar" src="" alt="User" class="w-8 h-8 rounded-full border border-indigo-500">
-                        <button onclick="logout()" class="text-slate-400 hover:text-rose-400 text-sm transition" title="Sign Out">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center space-x-6">
+        <a href="#all" class="hover:text-yellow-400 transition font-medium">Home</a>
+        
+        <!-- Category Dropdown -->
+        <div class="relative group">
+          <button class="hover:text-yellow-400 flex items-center gap-1 py-2 font-medium">
+            Categories <i class="fa-solid fa-chevron-down text-xs"></i>
+          </button>
+          <div class="absolute left-0 top-full hidden group-hover:block bg-white text-gray-800 shadow-xl rounded-lg w-48 py-2 border border-gray-100">
+            <a href="#jersey" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Jersey</a>
+            <a href="#vector" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Vector</a>
+            <a href="#logo" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Logo</a>
+            <a href="#cricket" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Cricket</a>
+            <a href="#football" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Football</a>
+          </div>
         </div>
-        <!-- Mobile Search Bar -->
-        <div class="px-4 pb-3 sm:hidden">
-            <div class="relative w-full">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-500"></i>
-                <input type="text" oninput="handleGlobalSearch(this.value)" placeholder="Search jerseys & tags..." class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-            </div>
-        </div>
-    </header>
 
-    <!-- CATEGORY TABS -->
-    <div id="category-bar" class="bg-slate-900/50 border-b border-slate-800/60 py-2.5">
-        <div class="max-w-7xl mx-auto px-4 overflow-x-auto flex items-center space-x-3 text-xs font-medium scrollbar-none">
-            <button onclick="filterCategory('all')" class="cat-tab bg-indigo-600 text-white px-3.5 py-1.5 rounded-lg transition shrink-0">All Designs</button>
-            <button onclick="filterCategory('Football')" class="cat-tab bg-slate-900 text-slate-300 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition shrink-0">Football</button>
-            <button onclick="filterCategory('Cricket')" class="cat-tab bg-slate-900 text-slate-300 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition shrink-0">Cricket</button>
-            <button onclick="filterCategory('Esports')" class="cat-tab bg-slate-900 text-slate-300 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition shrink-0">Esports</button>
-            <button onclick="filterCategory('Volleyball')" class="cat-tab bg-slate-900 text-slate-300 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition shrink-0">Volleyball</button>
-            <button onclick="filterCategory('Premium')" class="cat-tab bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3.5 py-1.5 rounded-lg transition shrink-0"><i class="fa-solid fa-crown mr-1"></i> Premium</button>
-        </div>
+        <a href="#about" class="hover:text-yellow-400 transition font-medium">About Us</a>
+        <button onclick="toggleAdminPanel()" class="bg-yellow-500 text-slate-900 px-3.5 py-1.5 rounded-lg font-bold hover:bg-yellow-400 text-sm shadow">
+          <i class="fa-solid fa-user-gear"></i> Admin Panel
+        </button>
+      </div>
     </div>
+  </nav>
 
-    <!-- MAIN VIEW CONTAINER -->
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-        <!-- HOME VIEW -->
-        <div id="home-view">
-            <div id="jersey-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
-                <!-- Loaded via JS -->
-            </div>
+  <!-- ADMIN UPLOAD PANEL -->
+  <div id="adminPanel" class="hidden max-w-3xl mx-auto my-6 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2"><i class="fa-solid fa-plus-circle text-yellow-500"></i> Add New Design</h2>
+    <form id="uploadForm" onsubmit="handleUpload(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-1">Design Title</label>
+        <input type="text" id="title" required placeholder="Ex: Sri Lanka Sublimation Cricket Jersey" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <!-- MULTIPLE CATEGORIES CHECKBOXES -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-2">Select Categories (Multiple Choice)</label>
+        <div class="flex flex-wrap gap-4 bg-gray-50 p-3 rounded-lg border">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Jersey" class="w-4 h-4 text-yellow-500 rounded"> Jersey</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Vector" class="w-4 h-4 text-yellow-500 rounded"> Vector</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Logo" class="w-4 h-4 text-yellow-500 rounded"> Logo</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Cricket" class="w-4 h-4 text-yellow-500 rounded"> Cricket</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Football" class="w-4 h-4 text-yellow-500 rounded"> Football</label>
         </div>
+      </div>
 
-        <!-- DETAIL VIEW (NEW PAGE LAYOUT) -->
-        <div id="detail-view" class="hidden">
-            <button onclick="goHome()" class="mb-6 bg-slate-900 hover:bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-medium border border-slate-800 transition flex items-center w-fit">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Back to Gallery
-            </button>
-            <div id="detail-content">
-                <!-- Loaded via JS -->
-            </div>
-        </div>
-    </main>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Type</label>
+        <select id="type" onchange="togglePriceInput()" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+          <option value="Free">Free</option>
+          <option value="Paid">Paid</option>
+        </select>
+      </div>
 
-    <!-- FOOTER -->
-    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-6 text-xs text-center">
-        <p>&copy; 2026 FreeVectorHub. All rights reserved. Monetized via AdSense & Premium Digital Assets.</p>
-    </footer>
+      <div id="priceContainer" class="hidden">
+        <label class="block text-sm font-semibold mb-1">Price (USD)</label>
+        <input type="number" id="price" step="0.01" placeholder="Ex: 2.99" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
 
-    <!-- MODAL: ADMIN UPLOAD PANEL -->
-    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative p-6">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-cloud-arrow-up text-indigo-400 mr-2"></i> Admin Upload Panel</h3>
-            <p class="text-xs text-slate-400 mb-4">Add a new jersey or vector design instantly.</p>
-            
-            <form onsubmit="handleAdminUpload(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Design Title</label>
-                    <input type="text" id="admin-title" placeholder="e.g. Neon Black Dragon Kit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
-                        <select id="admin-category" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <option value="Football">Football</option>
-                            <option value="Cricket">Cricket</option>
-                            <option value="Esports">Esports</option>
-                            <option value="Volleyball">Volleyball</option>
-                            <option value="Polo">Polo</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Design Type</label>
-                        <select id="admin-type" onchange="togglePriceField()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <option value="Free">Free</option>
-                            <option value="Premium">Premium (Paid)</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="price-box" class="hidden">
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Price</label>
-                    <input type="text" id="admin-price" value="$4.99" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Image URL</label>
-                    <input type="url" id="admin-image" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
-                    <textarea id="admin-desc" rows="2" placeholder="Brief description..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" required></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Tags (Comma separated)</label>
-                    <input type="text" id="admin-tags" placeholder="Football, Neon, Gold, Vector" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg mt-2">
-                    Publish Design
-                </button>
-            </form>
-        </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Preview Image URL</label>
+        <input type="url" id="imageUrl" required placeholder="https://example.com/image.jpg" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Downloadable File Link (Drive/ZIP)</label>
+        <input type="url" id="fileUrl" required placeholder="Google Drive / Cloud link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
+      <div class="md:col-span-2 flex justify-end gap-2 mt-2">
+        <button type="button" onclick="toggleAdminPanel()" class="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium">Cancel</button>
+        <button type="submit" class="px-5 py-2 bg-slate-900 text-yellow-400 rounded-lg font-bold hover:bg-slate-800">Save & Publish</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MAIN GRID SECTION -->
+  <main class="max-w-7xl mx-auto px-4 py-8 min-h-[60vh]">
+    <h1 id="pageTitle" class="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-yellow-500 pl-3">All Designs</h1>
+    
+    <div id="designGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Dynamic Items will load here -->
     </div>
+  </main>
 
-    <!-- SCRIPT LOGIC -->
-    <script>
-        const defaultJerseys = [
-            {
-                id: 1,
-                title: "Gold & Black Luxury Football Kit",
-                category: "Football",
-                type: "Premium",
-                price: "$4.99",
-                image: "https://images.unsplash.com/photo-1518063319789-7217ed6e297f?w=600",
-                description: "Premium gold vector artwork pattern with high-resolution vector layers suitable for sublimation printing.",
-                tags: ["Football", "Gold", "Luxury", "Vector"]
-            },
-            {
-                id: 2,
-                title: "White & Gold Sublimation Jersey Pattern",
-                category: "Cricket",
-                type: "Free",
-                price: "Free",
-                image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600",
-                description: "Clean modern cricket team kit concept with customizable text and sponsor badge vector layers.",
-                tags: ["Cricket", "White", "Sports", "Gold"]
-            },
-            {
-                id: 3,
-                title: "Red & White Spike Volleyball Jersey",
-                category: "Volleyball",
-                type: "Free",
-                price: "Free",
-                image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600",
-                description: "Dynamic splash vector graphics for athletic uniforms. AI & EPS formats available.",
-                tags: ["Volleyball", "Red", "Splash", "Vector"]
-            },
-            {
-                id: 4,
-                title: "Royal Blue Liquid Water Esports Jersey",
-                category: "Esports",
-                type: "Premium",
-                price: "$8.99",
-                image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600",
-                description: "High-tech gaming jersey pattern featuring wave energy graphics and sponsor branding areas.",
-                tags: ["Esports", "Blue", "Water", "Gaming"]
-            },
-            {
-                id: 5,
-                title: "Neon Cyberpunk Football Concept",
-                category: "Football",
-                type: "Free",
-                price: "Free",
-                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
-                description: "Futuristic neon glowing lines designed for night tournaments and modern clubs.",
-                tags: ["Football", "Neon", "Cyberpunk", "Dark"]
-            },
-            {
-                id: 6,
-                title: "Elite Championship Cricket Jersey",
-                category: "Cricket",
-                type: "Premium",
-                price: "$6.99",
-                image: "https://images.unsplash.com/photo-1519766304817-4f37bda74a26?w=600",
-                description: "Professional grade tournament jersey layout with sleek collar designs.",
-                tags: ["Cricket", "Elite", "Tournament"]
-            }
-        ];
+  <!-- ABOUT SECTION -->
+  <section id="about" class="bg-slate-900 text-white py-12 mt-16 border-t border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4">About VectorHub</h2>
+      <p class="text-gray-300 leading-relaxed mb-6">
+        VectorHub is a dedicated platform for sports graphic designers, team owners, and sublimation printing shops. 
+        We offer high-quality vector jersey templates, sublimation background patterns, and custom sport logos for free and premium downloads.
+      </p>
+      <div class="flex justify-center gap-6 text-2xl text-yellow-400">
+        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
+        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </section>
 
-        let jerseys = JSON.parse(localStorage.getItem('admin_jerseys')) || defaultJerseys;
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let designs = JSON.parse(localStorage.getItem('vector_designs')) || [
+      {
+        id: 1,
+        title: "Pro Sublimation Cricket Jersey",
+        categories: ["Jersey", "Cricket"],
+        type: "Free",
+        price: 0,
+        imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=500",
+        fileUrl: "https://drive.google.com"
+      }
+    ];
 
-        function renderJerseys(items) {
-            const grid = document.getElementById('jersey-grid');
-            if (items.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-xs">No designs found matching your search.</div>`;
-                return;
-            }
-            grid.innerHTML = items.map(j => `
-                <div onclick="openDetailView(${j.id})" class="relative group cursor-pointer overflow-hidden rounded-2xl bg-slate-900 border border-slate-800/80 hover:border-indigo-500/60 transition duration-300 shadow-md aspect-[4/5]">
-                    <img src="${j.image}" alt="${j.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    
-                    ${j.type === 'Premium' ? `
-                        <div class="absolute top-2.5 right-2.5 bg-slate-900/85 backdrop-blur-md p-1.5 px-2 rounded-lg border border-amber-500/40 shadow-lg text-amber-400 text-xs font-bold flex items-center">
-                            <i class="fa-solid fa-crown text-amber-400"></i>
-                        </div>
-                    ` : ''}
+    function renderGrid(itemsToRender, titleText) {
+      const grid = document.getElementById('designGrid');
+      document.getElementById('pageTitleinnerText', titleText);
+      document.getElementById('pageTitle').innerText = titleText;
+      grid.innerHTML = '';
 
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                </div>
-            `).join('');
-        }
+      if (itemsToRender.length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-16 text-lg">No designs found in this category.</p>`;
+        return;
+      }
 
-        function filterCategory(cat) {
-            document.querySelectorAll('.cat-tab').forEach(btn => {
-                btn.classList.remove('bg-indigo-600', 'text-white');
-                btn.classList.add('bg-slate-900', 'text-slate-300');
-                if (btn.innerText.includes(cat) || (cat === 'all' && btn.innerText.includes('All'))) {
-                    btn.classList.add('bg-indigo-600', 'text-white');
-                    btn.classList.remove('bg-slate-900', 'text-slate-300');
-                }
-            });
+      itemsToRender.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition flex flex-col";
+        
+        const categoriesBadge = item.categories.map(cat => `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join(' ');
 
-            if (cat === 'all') renderJerseys(jerseys);
-            else if (cat === 'Premium') renderJerseys(jerseys.filter(j => j.type === 'Premium'));
-            else renderJerseys(jerseys.filter(j => j.category === cat));
-        }
+        card.innerHTML = `
+          <div class="relative group overflow-hidden">
+            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
+            <span class="absolute top-2 right-2 px-2.5 py-1 text-xs font-bold rounded-full ${item.type === 'Free' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900 shadow'}">
+              ${item.type === 'Free' ? 'FREE' : '$' + item.price}
+            </span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex flex-wrap gap-1 mb-1.5">${categoriesBadge}</div>
+              <h3 class="font-bold text-gray-800 text-base line-clamp-1">${item.title}</h3>
+            </div>
+            <div class="mt-4 pt-3 border-t flex justify-between items-center">
+              <a href="${item.type === 'Free' ? item.fileUrl : '#'}" target="_blank" 
+                 class="w-full text-center py-2 px-3 rounded-lg text-sm font-bold transition ${item.type === 'Free' ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-yellow-500 text-slate-900 hover:bg-yellow-400'}">
+                ${item.type === 'Free' ? '<i class="fa-solid fa-download"></i> Download' : '<i class="fa-solid fa-cart-shopping"></i> Buy Now'}
+              </a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
 
-        // Global Search (Works in Home & Detail view)
-        function handleGlobalSearch(query) {
-            const q = query.toLowerCase().trim();
-            if (!q) {
-                goHome();
-                return;
-            }
+    function handleRoute() {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      
+      if (!hash || hash === 'all') {
+        renderGrid(designs, 'All Designs');
+      } else if (hash === 'about') {
+        // Scroll to about
+        document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Filter by selected category (case-insensitive check)
+        const filtered = designs.filter(d => d.categories.some(c => c.toLowerCase() === hash));
+        const formattedTitle = hash.charAt(0).toUpperCase() + hash.slice(1) + ' Designs';
+        renderGrid(filtered, formattedTitle);
+      }
+    }
 
-            // Switch to home view to display search results if we were in detail view
-            document.getElementById('detail-view').classList.add('hidden');
-            document.getElementById('home-view').classList.remove('hidden');
-            document.getElementById('category-bar').style.display = 'flex';
+    function handleUpload(e) {
+      e.preventDefault();
+      
+      // Get selected checkboxes
+      const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
+                                       .map(cb => cb.value);
 
-            const filtered = jerseys.filter(j => 
-                j.title.toLowerCase().includes(q) || 
-                j.category.toLowerCase().includes(q) || 
-                (j.tags && j.tags.some(t => t.toLowerCase().includes(q)))
-            );
-            renderJerseys(filtered);
-        }
+      if (selectedCategories.length === 0) {
+        alert('దయவுசெய்து குறைந்தபட்சம் ஒரு Category-ஐத் தேர்ந்தெடுக்கவும்! (Please select at least one category)');
+        return;
+      }
 
-        // Open Detail View with Recommended Section
-        function openDetailView(id) {
-            const j = jerseys.find(item => item.id === id);
-            if (!j) return;
+      const newDesign = {
+        id: Date.now(),
+        title: document.getElementById('title').value,
+        categories: selectedCategories,
+        type: document.getElementById('type').value,
+        price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
+        imageUrl: document.getElementById('imageUrl').value,
+        fileUrl: document.getElementById('fileUrl').value
+      };
 
-            window.history.pushState({ id: id }, j.title, `?design=${id}`);
+      designs.unshift(newDesign);
+      localStorage.setItem('vector_designs', JSON.stringify(designs));
+      handleRoute();
+      document.getElementById('uploadForm').reset();
+      toggleAdminPanel();
+    }
 
-            document.getElementById('home-view').classList.add('hidden');
-            document.getElementById('category-bar').style.display = 'none';
-            document.getElementById('detail-view').classList.remove('hidden');
+    function toggleAdminPanel() {
+      document.getElementById('adminPanel').classList.toggle('hidden');
+    }
 
-            // Find 4 recommended items based on matching Category or Tags (Random fallback if not enough)
-            let recommended = jerseys.filter(item => item.id !== j.id && (item.category === j.category || (item.tags && j.tags && item.tags.some(t => j.tags.includes(t)))));
-            if (recommended.length < 4) {
-                const others = jerseys.filter(item => item.id !== j.id && !recommended.includes(item));
-                recommended = [...recommended, ...others];
-            }
-            recommended = recommended.sort(() => 0.5 - Math.random()).slice(0, 4);
+    function togglePriceInput() {
+      const type = document.getElementById('type').value;
+      const container = document.getElementById('priceContainer');
+      if (type === 'Paid') {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
 
-            const content = document.getElementById('detail-content');
-            content.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl">
-                    <div class="rounded-2xl overflow-hidden bg-slate-950 aspect-[4/5] relative border border-slate-800">
-                        <img src="${j.image}" alt="${j.title}" class="w-full h-full object-cover">
-                        ${j.type === 'Premium' ? `
-                            <div class="absolute top-4 right-4 bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center">
-                                <i class="fa-solid fa-crown mr-1"></i> Premium Asset
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2 mb-3">
-                            <span class="bg-indigo-500/10 text-indigo-400 text-xs px-3 py-1 rounded-lg font-semibold border border-indigo-500/20">${j.category}</span>
-                            <span class="bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-lg font-semibold">ID: #${j.id}</span>
-                        </div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white">${j.title}</h1>
-                        <p class="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed">${j.description}</p>
-                        
-                        <div class="mt-6 flex flex-wrap gap-2">
-                            ${(j.tags || []).map(t => `<span onclick="handleGlobalSearch('${t}')" class="cursor-pointer bg-slate-800 hover:bg-indigo-600 hover:text-white transition text-slate-400 text-xs px-3 py-1.5 rounded-xl">#${t}</span>`).join('')}
-                        </div>
-
-                        <!-- AD SPACE -->
-                        <div class="my-6 p-4 bg-slate-950/80 border border-slate-800 rounded-xl text-center text-xs text-slate-500">
-                            <span>Advertisement (Google AdSense In-Article Ad)</span>
-                        </div>
-
-                        <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
-                            <div>
-                                <span class="text-xs text-slate-400 block">License / Price</span>
-                                <span class="text-2xl font-extrabold ${j.type === 'Premium' ? 'text-amber-400' : 'text-emerald-400'}">${j.type === 'Premium' ? j.price : 'Free'}</span>
-                            </div>
-                            <div>
-                                ${j.type === 'Premium' 
-                                    ? `<button onclick="alert('Redirecting to secure payment checkout...')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center text-sm"><i class="fa-solid fa-cart-shopping mr-2"></i> Buy & Download</button>`
-                                    : `<button onclick="alert('Download started successfully!')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg flex items-center text-sm"><i class="fa-solid fa-download mr-2"></i> Download Vector</button>`
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RECOMMENDED DESIGNS SECTION (4 Items matching Category/Tags) -->
-                <div class="mt-16">
-                    <h3 class="text-lg font-bold text-white mb-6 flex items-center"><i class="fa-solid fa-sparkles text-indigo-400 mr-2"></i> You Might Also Like</h3>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        ${recommended.map(rec => `
-                            <div onclick="openDetailView(${rec.id})" class="relative group cursor-pointer overflow-hidden rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition shadow-md aspect-[4/5]">
-                                <img src="${rec.image}" alt="${rec.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                                ${rec.type === 'Premium' ? `<div class="absolute top-2 right-2 bg-slate-900/85 p-1 px-1.5 rounded-lg border border-amber-500/40 text-amber-400 text-xs font-bold"><i class="fa-solid fa-crown"></i></div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function goHome() {
-            window.history.pushState({}, '', window.location.pathname);
-            document.getElementById('detail-view').classList.add('hidden');
-            document.getElementById('home-view').classList.remove('hidden');
-            document.getElementById('category-bar').style.display = 'flex';
-            document.getElementById('global-search').value = '';
-            renderJerseys(jerseys);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.addEventListener('popstate', () => {
-            const params = new URLSearchParams(window.location.search);
-            const designId = params.get('design');
-            if (designId) openDetailView(Number(designId));
-            else goHome();
-        });
-
-        // Admin Modal
-        function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
-        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
-        function togglePriceField() {
-            const type = document.getElementById('admin-type').value;
-            document.getElementById('price-box').classList.toggle('hidden', type !== 'Premium');
-        }
-
-        function handleAdminUpload(e) {
-            e.preventDefault();
-            const newJersey = {
-                id: Date.now(),
-                title: document.getElementById('admin-title').value,
-                category: document.getElementById('admin-category').value,
-                type: document.getElementById('admin-type').value,
-                price: document.getElementById('admin-type').value === 'Premium' ? document.getElementById('admin-price').value : 'Free',
-                image: document.getElementById('admin-image').value,
-                description: document.getElementById('admin-desc').value,
-                tags: document.getElementById('admin-tags').value.split(',').map(t => t.trim())
-            };
-            jerseys.unshift(newJersey);
-            localStorage.setItem('admin_jerseys', JSON.stringify(jerseys));
-            renderJerseys(jerseys);
-            closeAdminModal();
-            e.target.reset();
-            alert("New design published successfully!");
-        }
-
-        // Auth Simulation
-        window.loginWithGoogle = function() {
-            const userObj = { displayName: "Admin User", photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" };
-            localStorage.setItem('simulated_user', JSON.stringify(userObj));
-            updateAuthUI(userObj);
-        };
-        window.logout = function() {
-            localStorage.removeItem('simulated_user');
-            updateAuthUI(null);
-        };
-        function updateAuthUI(user) {
-            if (user) {
-                document.getElementById('login-btn').classList.add('hidden');
-                document.getElementById('user-profile').classList.remove('hidden');
-                document.getElementById('user-profile').classList.add('flex');
-                document.getElementById('user-avatar').src = user.photoURL;
-            } else {
-                document.getElementById('login-btn').classList.remove('hidden');
-                document.getElementById('user-profile').classList.add('hidden');
-            }
-        }
-        if (localStorage.getItem('simulated_user')) updateAuthUI(JSON.parse(localStorage.getItem('simulated_user')));
-
-        // Initial check on load
-        const initId = new URLSearchParams(window.location.search).get('design');
-        if (initId) openDetailView(Number(initId));
-        else renderJerseys(jerseys);
-    </script>
+    // Initial Route Load on startup
+    window.addEventListener('DOMContentLoaded', handleRoute);
+  </script>
 </body>
 </html>
