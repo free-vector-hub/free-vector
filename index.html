@@ -6,6 +6,7 @@
   <title>VectorHub - Sports Jersey & Vector Designs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="data.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800" onhashchange="handleRoute()">
 
@@ -18,11 +19,9 @@
         <i class="fa-solid fa-vector-square"></i> VectorHub
       </a>
 
-      <!-- Navigation Links -->
+      <!-- Desktop Nav -->
       <div class="hidden md:flex items-center space-x-6">
         <a href="#all" class="hover:text-yellow-400 transition font-medium">Home</a>
-        
-        <!-- Category Dropdown -->
         <div class="relative group">
           <button class="hover:text-yellow-400 flex items-center gap-1 py-2 font-medium">
             Categories <i class="fa-solid fa-chevron-down text-xs"></i>
@@ -35,74 +34,34 @@
             <a href="#football" class="block px-4 py-2 hover:bg-yellow-50 hover:text-yellow-600">Football</a>
           </div>
         </div>
-
         <a href="#about" class="hover:text-yellow-400 transition font-medium">About Us</a>
-        <button onclick="toggleAdminPanel()" class="bg-yellow-500 text-slate-900 px-3.5 py-1.5 rounded-lg font-bold hover:bg-yellow-400 text-sm shadow">
-          <i class="fa-solid fa-user-gear"></i> Admin Panel
-        </button>
       </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button onclick="toggleMobileMenu()" class="md:hidden text-yellow-400 text-2xl focus:outline-none">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden bg-slate-800 border-t border-slate-700 px-4 py-3 space-y-2">
+      <a href="#all" onclick="toggleMobileMenu()" class="block text-white hover:text-yellow-400 py-1">Home</a>
+      <div class="font-semibold text-yellow-400 pt-2 border-t border-slate-700">Categories:</div>
+      <div class="pl-3 space-y-1">
+        <a href="#jersey" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-yellow-400 py-1">Jersey</a>
+        <a href="#vector" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-yellow-400 py-1">Vector</a>
+        <a href="#logo" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-yellow-400 py-1">Logo</a>
+        <a href="#cricket" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-yellow-400 py-1">Cricket</a>
+        <a href="#football" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-yellow-400 py-1">Football</a>
+      </div>
+      <a href="#about" onclick="toggleMobileMenu()" class="block text-white hover:text-yellow-400 py-1 border-t border-slate-700 pt-2">About Us</a>
     </div>
   </nav>
-
-  <!-- ADMIN UPLOAD PANEL -->
-  <div id="adminPanel" class="hidden max-w-3xl mx-auto my-6 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2"><i class="fa-solid fa-plus-circle text-yellow-500"></i> Add New Design</h2>
-    <form id="uploadForm" onsubmit="handleUpload(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      
-      <div class="md:col-span-2">
-        <label class="block text-sm font-semibold mb-1">Design Title</label>
-        <input type="text" id="title" required placeholder="Ex: Sri Lanka Sublimation Cricket Jersey" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-      </div>
-
-      <!-- MULTIPLE CATEGORIES CHECKBOXES -->
-      <div class="md:col-span-2">
-        <label class="block text-sm font-semibold mb-2">Select Categories (Multiple Choice)</label>
-        <div class="flex flex-wrap gap-4 bg-gray-50 p-3 rounded-lg border">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Jersey" class="w-4 h-4 text-yellow-500 rounded"> Jersey</label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Vector" class="w-4 h-4 text-yellow-500 rounded"> Vector</label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Logo" class="w-4 h-4 text-yellow-500 rounded"> Logo</label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Cricket" class="w-4 h-4 text-yellow-500 rounded"> Cricket</label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Football" class="w-4 h-4 text-yellow-500 rounded"> Football</label>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-sm font-semibold mb-1">Type</label>
-        <select id="type" onchange="togglePriceInput()" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-          <option value="Free">Free</option>
-          <option value="Paid">Paid</option>
-        </select>
-      </div>
-
-      <div id="priceContainer" class="hidden">
-        <label class="block text-sm font-semibold mb-1">Price (USD)</label>
-        <input type="number" id="price" step="0.01" placeholder="Ex: 2.99" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-      </div>
-
-      <div>
-        <label class="block text-sm font-semibold mb-1">Preview Image URL</label>
-        <input type="url" id="imageUrl" required placeholder="https://example.com/image.jpg" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-      </div>
-
-      <div>
-        <label class="block text-sm font-semibold mb-1">Downloadable File Link (Drive/ZIP)</label>
-        <input type="url" id="fileUrl" required placeholder="Google Drive / Cloud link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-      </div>
-
-      <div class="md:col-span-2 flex justify-end gap-2 mt-2">
-        <button type="button" onclick="toggleAdminPanel()" class="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium">Cancel</button>
-        <button type="submit" class="px-5 py-2 bg-slate-900 text-yellow-400 rounded-lg font-bold hover:bg-slate-800">Save & Publish</button>
-      </div>
-    </form>
-  </div>
 
   <!-- MAIN GRID SECTION -->
   <main class="max-w-7xl mx-auto px-4 py-8 min-h-[60vh]">
     <h1 id="pageTitle" class="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-yellow-500 pl-3">All Designs</h1>
-    
-    <div id="designGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <!-- Dynamic Items will load here -->
-    </div>
+    <div id="designGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </main>
 
   <!-- ABOUT SECTION -->
@@ -111,33 +70,14 @@
       <h2 class="text-3xl font-bold text-yellow-400 mb-4">About VectorHub</h2>
       <p class="text-gray-300 leading-relaxed mb-6">
         VectorHub is a dedicated platform for sports graphic designers, team owners, and sublimation printing shops. 
-        We offer high-quality vector jersey templates, sublimation background patterns, and custom sport logos for free and premium downloads.
+        We offer high-quality vector jersey templates and custom sport logos for free and premium downloads.
       </p>
-      <div class="flex justify-center gap-6 text-2xl text-yellow-400">
-        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
-        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
-      </div>
     </div>
   </section>
 
-  <!-- JAVASCRIPT LOGIC -->
   <script>
-    let designs = JSON.parse(localStorage.getItem('vector_designs')) || [
-      {
-        id: 1,
-        title: "Pro Sublimation Cricket Jersey",
-        categories: ["Jersey", "Cricket"],
-        type: "Free",
-        price: 0,
-        imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=500",
-        fileUrl: "https://drive.google.com"
-      }
-    ];
-
     function renderGrid(itemsToRender, titleText) {
       const grid = document.getElementById('designGrid');
-      document.getElementById('pageTitleinnerText', titleText);
       document.getElementById('pageTitle').innerText = titleText;
       grid.innerHTML = '';
 
@@ -149,7 +89,6 @@
       itemsToRender.forEach(item => {
         const card = document.createElement('div');
         card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition flex flex-col";
-        
         const categoriesBadge = item.categories.map(cat => `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join(' ');
 
         card.innerHTML = `
@@ -163,6 +102,7 @@
             <div>
               <div class="flex flex-wrap gap-1 mb-1.5">${categoriesBadge}</div>
               <h3 class="font-bold text-gray-800 text-base line-clamp-1">${item.title}</h3>
+              <p class="text-xs text-gray-500 mt-1 line-clamp-2">${item.description || ''}</p>
             </div>
             <div class="mt-4 pt-3 border-t flex justify-between items-center">
               <a href="${item.type === 'Free' ? item.fileUrl : '#'}" target="_blank" 
@@ -178,64 +118,22 @@
 
     function handleRoute() {
       const hash = window.location.hash.replace('#', '').toLowerCase();
+      const designs = getDesigns();
       
       if (!hash || hash === 'all') {
         renderGrid(designs, 'All Designs');
       } else if (hash === 'about') {
-        // Scroll to about
         document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
       } else {
-        // Filter by selected category (case-insensitive check)
         const filtered = designs.filter(d => d.categories.some(c => c.toLowerCase() === hash));
-        const formattedTitle = hash.charAt(0).toUpperCase() + hash.slice(1) + ' Designs';
-        renderGrid(filtered, formattedTitle);
+        renderGrid(filtered, hash.charAt(0).toUpperCase() + hash.slice(1) + ' Designs');
       }
     }
 
-    function handleUpload(e) {
-      e.preventDefault();
-      
-      // Get selected checkboxes
-      const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
-                                       .map(cb => cb.value);
-
-      if (selectedCategories.length === 0) {
-        alert('దయவுசெய்து குறைந்தபட்சம் ஒரு Category-ஐத் தேர்ந்தெடுக்கவும்! (Please select at least one category)');
-        return;
-      }
-
-      const newDesign = {
-        id: Date.now(),
-        title: document.getElementById('title').value,
-        categories: selectedCategories,
-        type: document.getElementById('type').value,
-        price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
-        imageUrl: document.getElementById('imageUrl').value,
-        fileUrl: document.getElementById('fileUrl').value
-      };
-
-      designs.unshift(newDesign);
-      localStorage.setItem('vector_designs', JSON.stringify(designs));
-      handleRoute();
-      document.getElementById('uploadForm').reset();
-      toggleAdminPanel();
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
-    function toggleAdminPanel() {
-      document.getElementById('adminPanel').classList.toggle('hidden');
-    }
-
-    function togglePriceInput() {
-      const type = document.getElementById('type').value;
-      const container = document.getElementById('priceContainer');
-      if (type === 'Paid') {
-        container.classList.remove('hidden');
-      } else {
-        container.classList.add('hidden');
-      }
-    }
-
-    // Initial Route Load on startup
     window.addEventListener('DOMContentLoaded', handleRoute);
   </script>
 </body>
