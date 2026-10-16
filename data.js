@@ -14,7 +14,14 @@ const defaultDesigns = [
 
 function getDesigns() {
   const stored = localStorage.getItem('vector_hub_data');
-  return stored ? JSON.parse(stored) : defaultDesigns;
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      return defaultDesigns;
+    }
+  }
+  return defaultDesigns;
 }
 
 function saveDesigns(data) {
