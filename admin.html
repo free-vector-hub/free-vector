@@ -115,156 +115,33 @@
 
   </div>
 
-  <script>
-    const SECRET_PASSWORD = "admin123";
+          <script type="module">
+  import { addDesignToFirebase, deleteDesignFromFirebase, listenToDesigns } from './data.js';
 
-    function checkPassword(e) {
-      e.preventDefault();
-      const pass = document.getElementById('adminPass').value;
-      if (pass === SECRET_PASSWORD) {
-        document.getElementById('loginBox').classList.add('hidden');
-        document.getElementById('adminPanel').classList.remove('hidden');
-        renderManageTable();
-      } else {
-        alert("Incorrect Password!");
-      }
-    }
-
-    function togglePriceInput() {
-      const type = document.getElementById('type').value;
-      document.getElementById('priceContainer').classList.toggle('hidden', type !== 'Paid');
-    }
-
-    function renderManageTable() {
-      const designs = getDesigns();
-      const tbody = document.getElementById('manageTableBody');
-      tbody.innerHTML = '';
-
-      if (designs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No designs uploaded yet.</td></tr>`;
-        return;
-      }
-
-      designs.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="p-3"><img src="${item.imageUrl}" class="w-12 h-10 object-cover rounded"></td>
-          <td class="p-3 font-semibold text-slate-800">${item.title}</td>
-          <td class="p-3"><span class="px-2 py-0.5 text-xs rounded ${item.type === 'Free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.type}</span></td>
-          <td class="p-3 text-center space-x-2">
-            <button onclick="editDesign(${item.id})" class="px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 font-semibold text-xs"><i class="fa-solid fa-pen"></i> Edit</button>
-            <button onclick="deleteDesign(${item.id})" class="px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 font-semibold text-xs"><i class="fa-solid fa-trash"></i> Delete</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function handleFormSubmit(e) {
-      e.preventDefault();
-      const editId = document.getElementById('editId').value;
-      const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-
-      if (selectedCategories.length === 0) {
-        alert('Please select at least one category!');
-        return;
-      }
-
-      const fileInput = document.getElementById('imageFile');
-      const existingImageUrl = document.getElementById('existingImageUrl').value;
-
-      if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(uploadEvent) {
-          saveDesignData(editId, uploadEvent.target.result, selectedCategories);
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-      } else {
-        saveDesignData(editId, existingImageUrl, selectedCategories);
-      }
-    }
-
-    function saveDesignData(editId, imageUrl, categories) {
-      let designs = getDesigns();
-      const designObj = {
-        id: editId ? Number(editId) : Date.now(),
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        tags: document.getElementById('tags').value,
-        categories: categories,
-        type: document.getElementById('type').value,
-        price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
-        imageUrl: imageUrl,
-        fileUrl: document.getElementById('fileUrl').value
-      };
-
-      if (editId) {
-        const index = designs.findIndex(d => d.id == editId);
-        if (index !== -1) {
-          designs[index] = designObj;
-        }
-        alert('Design Updated Successfully!');
-      } else {
-        designs.unshift(designObj);
-        alert('Design Published Successfully!');
-      }
-
-      saveDesigns(designs);
-      resetForm();
+  // Realtime listener for Admin table
+  listenToDesigns((designs) => {
+    if (typeof renderManageTable === 'function') {
       renderManageTable();
     }
+  });
 
-    function editDesign(id) {
-      const designs = getDesigns();
-      const item = designs.find(d => d.id == id);
-      if (!item) return;
+  // Override Save Form to use Firebase
+  window.saveDesignDataToCloud = function(designObj) {
+    addDesignToFirebase(designObj, () => {
+      alert('Design Published Online Successfully!');
+      resetForm();
+    });
+  };
 
-      document.getElementById('editId').value = item.id;
-      document.getElementById('title').value = item.title;
-      document.getElementById('description').value = item.description || '';
-      document.getElementById('tags').value = item.tags || '';
-      document.getElementById('type').value = item.type;
-      document.getElementById('price').value = item.price || '';
-      document.getElementById('fileUrl').value = item.fileUrl || '';
-      document.getElementById('existingImageUrl').value = item.imageUrl;
-
-      togglePriceInput();
-
-      document.querySelectorAll('input[name="category"]').forEach(cb => {
-        cb.checked = item.categories.includes(cb.value);
+  // Override Delete to use Firebase
+  window.deleteDesignFromCloud = function(firebaseId) {
+    if (confirm('Are you sure you want to delete this design?')) {
+      deleteDesignFromFirebase(firebaseId, () => {
+        alert('Design deleted successfully!');
       });
-
-      document.getElementById('formTitle.innerHTML') = `<i class="fa-solid fa-pen-to-square text-yellow-500"></i> Edit Design`;
-      document.getElementById('submitBtn').innerText = 'Update Design';
-      document.getElementById('cancelEditBtn').classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+</script>
 
-    function deleteDesign(id) {
-      if (confirm('Are you sure you want to delete this design?')) {
-        let designs = getDesigns();
-        designs = designs.filter(d => d.id != id);
-        saveDesigns(designs);
-        renderManageTable();
-      }
-    }
-
-    function resetForm() {
-      document.getElementById('editId').value = '';
-      document.getElementById('title').value = '';
-      document.getElementById('description').value = '';
-      document.getElementById('tags').value = '';
-      document.getElementById('type').value = 'Free';
-      document.getElementById('price').value = '';
-      document.getElementById('imageFile').value = '';
-      document.getElementById('existingImageUrl').value = '';
-      document.getElementById('fileUrl').value = '';
-      document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = false);
-      document.getElementById('priceContainer').classList.add('hidden');
-      document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-yellow-500"></i> Add New Design`;
-      document.getElementById('submitBtn').innerText = 'Save & Publish Design';
-      document.getElementById('cancelEditBtn').classList.add('hidden');
-    }
-  </script>
 </body>
 </html>
