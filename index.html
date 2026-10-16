@@ -58,11 +58,27 @@
     </div>
   </nav>
 
-  <!-- MAIN GRID SECTION -->
+  <!-- MAIN GALLERY GRID SECTION -->
   <main class="max-w-7xl mx-auto px-4 py-8 min-h-[60vh]">
     <h1 id="pageTitle" class="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-yellow-500 pl-3">All Designs</h1>
-    <div id="designGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div id="designGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
   </main>
+
+  <!-- DETAIL MODAL (Popup to show full info when image clicked) -->
+  <div id="detailModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-fadeIn">
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <img id="modalImg" src="" alt="" class="w-full h-64 object-cover">
+      <div class="p-6">
+        <div id="modalCategories" class="flex flex-wrap gap-1 mb-2"></div>
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-2"></h3>
+        <p id="modalDesc" class="text-sm text-gray-600 mb-6 leading-relaxed"></p>
+        <a id="modalActionBtn" href="#" target="_blank" class="block text-center py-3 rounded-xl font-bold shadow transition"></a>
+      </div>
+    </div>
+  </div>
 
   <!-- ABOUT SECTION -->
   <section id="about" class="bg-slate-900 text-white py-12 mt-16 border-t border-slate-800">
@@ -88,32 +104,46 @@
 
       itemsToRender.forEach(item => {
         const card = document.createElement('div');
-        card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition flex flex-col";
-        const categoriesBadge = item.categories.map(cat => `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join(' ');
+        // Clean Pinterest style image card
+        card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition cursor-pointer relative group";
+        card.onclick = () => openModal(item);
 
         card.innerHTML = `
-          <div class="relative group overflow-hidden">
-            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
-            <span class="absolute top-2 right-2 px-2.5 py-1 text-xs font-bold rounded-full ${item.type === 'Free' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900 shadow'}">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <span class="absolute top-2 right-2 px-2.5 py-0.5 text-xs font-bold rounded-full shadow ${item.type === 'Free' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900'}">
               ${item.type === 'Free' ? 'FREE' : '$' + item.price}
             </span>
-          </div>
-          <div class="p-4 flex-1 flex flex-col justify-between">
-            <div>
-              <div class="flex flex-wrap gap-1 mb-1.5">${categoriesBadge}</div>
-              <h3 class="font-bold text-gray-800 text-base line-clamp-1">${item.title}</h3>
-              <p class="text-xs text-gray-500 mt-1 line-clamp-2">${item.description || ''}</p>
-            </div>
-            <div class="mt-4 pt-3 border-t flex justify-between items-center">
-              <a href="${item.type === 'Free' ? item.fileUrl : '#'}" target="_blank" 
-                 class="w-full text-center py-2 px-3 rounded-lg text-sm font-bold transition ${item.type === 'Free' ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-yellow-500 text-slate-900 hover:bg-yellow-400'}">
-                ${item.type === 'Free' ? '<i class="fa-solid fa-download"></i> Download' : '<i class="fa-solid fa-cart-shopping"></i> Buy Now'}
-              </a>
-            </div>
           </div>
         `;
         grid.appendChild(card);
       });
+    }
+
+    function openModal(item) {
+      document.getElementById('modalImg').src = item.imageUrl;
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalDesc').innerText = item.description || 'No description provided.';
+      
+      const catContainer = document.getElementById('modalCategories');
+      catContainer.innerHTML = item.categories.map(cat => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join(' ');
+
+      const btn = document.getElementById('modalActionBtn');
+      if (item.type === 'Free') {
+        btn.href = item.fileUrl;
+        btn.className = "block text-center py-3 rounded-xl font-bold shadow bg-slate-900 text-white hover:bg-slate-800";
+        btn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
+      } else {
+        btn.href = '#'; // PayHere integration link can go here later
+        btn.className = "block text-center py-3 rounded-xl font-bold shadow bg-yellow-500 text-slate-900 hover:bg-yellow-400";
+        btn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy Now ($${item.price})`;
+      }
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
     }
 
     function handleRoute() {
