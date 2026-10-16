@@ -24,8 +24,8 @@
   </div>
 
   <!-- ADMIN UPLOAD PANEL -->
-  <div id="adminPanel" class="hidden bg-white w-full max-w-3xl p-6 rounded-2xl shadow-2xl my-8">
-    <div class="flex justify-between items-center border-b pb-3 mb-6">
+  <div id="adminPanel" class="hidden bg-white w-full max-w-3xl p-6 rounded-2xl shadow-2xl my-6">
+    <div class="flex justify-between items-center border-b pb-3 mb-4">
       <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-yellow-500"></i> Add New Design</h2>
       <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900"><i class="fa-solid fa-house"></i> Go to Home</a>
     </div>
@@ -37,13 +37,17 @@
         <input type="text" id="title" required placeholder="Ex: Sri Lanka Sublimation Cricket Jersey" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
       </div>
 
-      <!-- DESCRIPTION FIELD -->
       <div class="md:col-span-2">
-        <label class="block text-sm font-semibold mb-1">Description (விளக்கம்)</label>
-        <textarea id="description" rows="3" placeholder="Enter design details, resolution, features..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"></textarea>
+        <label class="block text-sm font-semibold mb-1">Description</label>
+        <textarea id="description" rows="2" placeholder="Enter design details..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"></textarea>
       </div>
 
-      <!-- MULTIPLE CATEGORIES -->
+      <!-- TAGS INPUT FIELD -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold mb-1">Tags (Comma separated)</label>
+        <input type="text" id="tags" placeholder="cricket, jersey, blue, sublimation" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+      </div>
+
       <div class="md:col-span-2">
         <label class="block text-sm font-semibold mb-2">Select Categories (Multiple Choice)</label>
         <div class="flex flex-wrap gap-4 bg-gray-50 p-3 rounded-lg border">
@@ -78,14 +82,14 @@
         <input type="url" id="fileUrl" required placeholder="Google Drive / Cloud link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
       </div>
 
-      <div class="md:col-span-2 flex justify-end gap-2 mt-4">
+      <div class="md:col-span-2 flex justify-end gap-2 mt-2">
         <button type="submit" class="w-full py-3 bg-yellow-500 text-slate-900 rounded-xl font-bold hover:bg-yellow-400 shadow text-base">Save & Publish Design</button>
       </div>
     </form>
   </div>
 
   <script>
-    const SECRET_PASSWORD = "admin123"; // உங்கள் கடவுச்சொல்
+    const SECRET_PASSWORD = "admin123";
 
     function checkPassword(e) {
       e.preventDefault();
@@ -116,6 +120,7 @@
         id: Date.now(),
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
+        tags: document.getElementById('tags').value,
         categories: selectedCategories,
         type: document.getElementById('type').value,
         price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
