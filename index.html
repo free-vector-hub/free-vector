@@ -13,13 +13,9 @@
   <!-- NAVBAR -->
   <nav class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-      
-      <!-- Logo -->
-      <a href="#" onclick="changeRoute('all')" class="text-2xl font-bold text-yellow-400 flex items-center gap-2">
+      <a href="#all" class="text-2xl font-bold text-yellow-400 flex items-center gap-2">
         <i class="fa-solid fa-vector-square"></i> VectorHub
       </a>
-
-      <!-- Desktop Nav -->
       <div class="hidden md:flex items-center space-x-6">
         <a href="#all" class="hover:text-yellow-400 transition font-medium">Home</a>
         <div class="relative group">
@@ -36,8 +32,6 @@
         </div>
         <a href="#about" class="hover:text-yellow-400 transition font-medium">About Us</a>
       </div>
-
-      <!-- Mobile Hamburger Button -->
       <button onclick="toggleMobileMenu()" class="md:hidden text-yellow-400 text-2xl focus:outline-none">
         <i class="fa-solid fa-bars"></i>
       </button>
@@ -58,128 +52,74 @@
     </div>
   </nav>
 
-  <!-- MAIN GALLERY GRID SECTION -->
-  <main class="max-w-7xl mx-auto px-4 py-8 min-h-[60vh]">
-    <h1 id="pageTitle" class="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-yellow-500 pl-3">All Designs</h1>
-    <div id="designGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  <!-- MAIN DYNAMIC CONTAINER -->
+  <main id="mainContainer" class="max-w-7xl mx-auto px-4 py-6 min-h-[60vh]">
+    <!-- Content will be injected dynamically via JS -->
   </main>
 
-  <!-- DETAIL MODAL (Popup to show full info when image clicked) -->
-  <div id="detailModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-fadeIn">
-      <button onclick="closeModal()" class="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <img id="modalImg" src="" alt="" class="w-full h-64 object-cover">
-      <div class="p-6">
-        <div id="modalCategories" class="flex flex-wrap gap-1 mb-2"></div>
-        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-2"></h3>
-        <p id="modalDesc" class="text-sm text-gray-600 mb-6 leading-relaxed"></p>
-        <a id="modalActionBtn" href="#" target="_blank" class="block text-center py-3 rounded-xl font-bold shadow transition"></a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ABOUT SECTION -->
-  <section id="about" class="bg-slate-900 text-white py-12 mt-16 border-t border-slate-800">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold text-yellow-400 mb-4">About VectorHub</h2>
-      <p class="text-gray-300 leading-relaxed mb-6">
-        VectorHub is a dedicated platform for sports graphic designers, team owners, and sublimation printing shops. 
-        We offer high-quality vector jersey templates and custom sport logos for free and premium downloads.
-      </p>
-    </div>
-  </section>
   <!-- PROFESSIONAL FOOTER SECTION -->
-<footer class="bg-slate-900 text-gray-400 pt-16 pb-8 border-t border-slate-800">
-  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-    
-    <!-- Column 1: Brand Info -->
-    <div>
-      <a href="#" class="text-2xl font-bold text-yellow-400 flex items-center gap-2 mb-4">
-        <i class="fa-solid fa-vector-square"></i> VectorHub
-      </a>
-      <p class="text-sm leading-relaxed mb-4 text-gray-300">
-        VectorHub is a premier platform for sports graphic designers, team owners, and sublimation printing shops across Sri Lanka and globally.
-      </p>
-      <p class="text-xs text-gray-400">
-        Find high-quality vector jersey templates, sublimation background patterns, and custom sport logos.
-      </p>
-    </div>
-
-    <!-- Column 2: Quick Links -->
-    <div>
-      <h3 class="text-white font-bold text-base mb-4 tracking-wide border-l-2 border-yellow-500 pl-2">Quick Links</h3>
-      <ul class="space-y-2.5 text-sm">
-        <li><a href="#all" class="hover:text-yellow-400 transition">Home</a></li>
-        <li><a href="#jersey" class="hover:text-yellow-400 transition">Jersey Designs</a></li>
-        <li><a href="#vector" class="hover:text-yellow-400 transition">Vector Graphics</a></li>
-        <li><a href="#logo" class="hover:text-yellow-400 transition">Sports Logos</a></li>
-      </ul>
-    </div>
-
-    <!-- Column 3: Support & Legal -->
-    <div>
-      <h3 class="text-white font-bold text-base mb-4 tracking-wide border-l-2 border-yellow-500 pl-2">Support</h3>
-      <ul class="space-y-2.5 text-sm">
-        <li><a href="#about" class="hover:text-yellow-400 transition">About Us</a></li>
-        <li><a href="#" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
-        <li><a href="#" class="hover:text-yellow-400 transition">Terms & Conditions</a></li>
-        <li><a href="#" class="hover:text-yellow-400 transition">Disclaimer</a></li>
-      </ul>
-    </div>
-
-    <!-- Column 4: Contact & Social -->
-    <div>
-      <h3 class="text-white font-bold text-base mb-4 tracking-wide border-l-2 border-yellow-500 pl-2">Contact Us</h3>
-      <ul class="space-y-3 text-sm mb-6">
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-envelope text-yellow-500"></i>
-          <a href="mailto:support@vectorhub.com" class="hover:text-yellow-400 transition">support@vectorhub.com</a>
-        </li>
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-globe text-yellow-500"></i>
-          <span>www.vectorhub.store</span>
-        </li>
-      </ul>
-      <div class="flex gap-3">
-        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition"><i class="fa-brands fa-whatsapp"></i></a>
+  <footer class="bg-slate-900 text-gray-400 pt-12 pb-6 border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <div>
+        <a href="#all" class="text-2xl font-bold text-yellow-400 flex items-center gap-2 mb-3">
+          <i class="fa-solid fa-vector-square"></i> VectorHub
+        </a>
+        <p class="text-sm leading-relaxed text-gray-300">
+          VectorHub is a premier platform for sports graphic designers and sublimation printing shops.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-white font-bold text-base mb-3 border-l-2 border-yellow-500 pl-2">Quick Links</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#all" class="hover:text-yellow-400 transition">Home</a></li>
+          <li><a href="#jersey" class="hover:text-yellow-400 transition">Jersey Designs</a></li>
+          <li><a href="#vector" class="hover:text-yellow-400 transition">Vector Graphics</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-bold text-base mb-3 border-l-2 border-yellow-500 pl-2">Support</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#about" class="hover:text-yellow-400 transition">About Us</a></li>
+          <li><a href="#" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-bold text-base mb-3 border-l-2 border-yellow-500 pl-2">Contact Us</h3>
+        <p class="text-sm text-gray-300 mb-3">support@vectorhub.store</p>
+        <div class="flex gap-3">
+          <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition"><i class="fa-brands fa-instagram"></i></a>
+        </div>
       </div>
     </div>
-
-  </div>
-
-  <!-- Bottom Bar -->
-  <div class="max-w-7xl mx-auto px-4 pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-    <p>&copy; 2026 VectorHub. All rights reserved.</p>
-    <p class="mt-2 md:mt-0">Sports Jersey & Vector Design Platform</p>
-  </div>
-</footer>
-
+    <div class="max-w-7xl mx-auto px-4 pt-4 border-t border-slate-800 text-center text-xs text-gray-500">
+      <p>&copy; 2026 VectorHub. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script>
     function renderGrid(itemsToRender, titleText) {
+      const container = document.getElementById('mainContainer');
+      container.innerHTML = `
+        <h1 class="text-xl font-bold mb-4 text-slate-800 border-l-4 border-yellow-500 pl-3">${titleText}</h1>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="designGrid"></div>
+      `;
       const grid = document.getElementById('designGrid');
-      document.getElementById('pageTitle').innerText = titleText;
-      grid.innerHTML = '';
 
       if (itemsToRender.length === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-16 text-lg">No designs found in this category.</p>`;
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-12">No designs found.</p>`;
         return;
       }
 
       itemsToRender.forEach(item => {
         const card = document.createElement('div');
-        // Clean Pinterest style image card
         card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition cursor-pointer relative group";
-        card.onclick = () => openModal(item);
+        card.onclick = () => { window.location.hash = `#detail-${item.id}`; };
 
         card.innerHTML = `
-          <div class="relative overflow-hidden aspect-[4/3]">
-            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-            <span class="absolute top-2 right-2 px-2.5 py-0.5 text-xs font-bold rounded-full shadow ${item.type === 'Free' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900'}">
+          <div class="relative overflow-hidden aspect-[4/3] bg-gray-100 flex items-center justify-center">
+            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+            <span class="absolute top-2 right-2 px-2 py-0.5 text-[10px] font-bold rounded-full shadow ${item.type === 'Free' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900'}">
               ${item.type === 'Free' ? 'FREE' : '$' + item.price}
             </span>
           </div>
@@ -188,42 +128,86 @@
       });
     }
 
-    function openModal(item) {
-      document.getElementById('modalImg').src = item.imageUrl;
-      document.getElementById('modalTitle').innerText = item.title;
-      document.getElementById('modalDesc').innerText = item.description || 'No description provided.';
-      
-      const catContainer = document.getElementById('modalCategories');
-      catContainer.innerHTML = item.categories.map(cat => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join(' ');
+    function renderDetailView(id) {
+      const designs = getDesigns();
+      const item = designs.find(d => d.id == id);
+      const container = document.getElementById('mainContainer');
 
-      const btn = document.getElementById('modalActionBtn');
-      if (item.type === 'Free') {
-        btn.href = item.fileUrl;
-        btn.className = "block text-center py-3 rounded-xl font-bold shadow bg-slate-900 text-white hover:bg-slate-800";
-        btn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
-      } else {
-        btn.href = '#'; // PayHere integration link can go here later
-        btn.className = "block text-center py-3 rounded-xl font-bold shadow bg-yellow-500 text-slate-900 hover:bg-yellow-400";
-        btn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy Now ($${item.price})`;
+      if (!item) {
+        container.innerHTML = `<p class="text-center py-16 text-gray-500">Design not found.</p>`;
+        return;
       }
 
-      document.getElementById('detailModal').classList.remove('hidden');
-    }
+      // Recommended designs (same category)
+      const recommended = designs.filter(d => d.id != item.id && d.categories.some(c => item.categories.includes(c))).slice(0, 4);
 
-    function closeModal() {
-      document.getElementById('detailModal').classList.add('hidden');
+      container.innerHTML = `
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6 my-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-100 rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+              <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+            </div>
+            <div>
+              <div class="flex flex-wrap gap-1 mb-2">
+                ${item.categories.map(cat => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">${cat}</span>`).join('')}
+              </div>
+              <h1 class="text-2xl font-bold text-slate-900 mb-2">${item.title}</h1>
+              <p class="text-sm text-gray-600 mb-4 leading-relaxed">${item.description || 'No description provided.'}</p>
+              ${item.tags ? `<p class="text-xs text-gray-400 mb-4"><strong>Tags:</strong> ${item.tags}</p>` : ''}
+              
+              <a href="${item.type === 'Free' ? item.fileUrl : '#'}" target="_blank" 
+                 class="block text-center py-3 rounded-xl font-bold shadow transition ${item.type === 'Free' ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-yellow-500 text-slate-900 hover:bg-yellow-400'}">
+                ${item.type === 'Free' ? '<i class="fa-solid fa-download"></i> Download File' : '<i class="fa-solid fa-cart-shopping"></i> Buy Now ($' + item.price + ')'}
+              </a>
+              <button onclick="window.history.back()" class="mt-3 w-full text-center py-2 text-sm text-gray-600 hover:text-slate-900 font-semibold">
+                <i class="fa-solid fa-arrow-left"></i> Back to Gallery
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECOMMENDED DESIGNS -->
+        ${recommended.length > 0 ? `
+          <div class="max-w-4xl mx-auto mt-12">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 border-l-4 border-yellow-500 pl-3">Recommended Designs</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="recGrid"></div>
+          </div>
+        ` : ''}
+      `;
+
+      if (recommended.length > 0) {
+        const recGrid = document.getElementById('recGrid');
+        recommended.forEach(rec => {
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition";
+          card.onclick = () => { window.location.hash = `#detail-${rec.id}`; window.scrollTo(0,0); };
+          card.innerHTML = `
+            <div class="aspect-[4/3] bg-gray-100 overflow-hidden">
+              <img src="${rec.imageUrl}" alt="${rec.title}" class="w-full h-full object-cover hover:scale-105 transition">
+            </div>
+            <div class="p-2">
+              <h4 class="text-xs font-bold text-slate-800 line-clamp-1">${rec.title}</h4>
+            </div>
+          `;
+          recGrid.appendChild(card);
+        });
+      }
     }
 
     function handleRoute() {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const hash = window.location.hash.replace('#', '');
       const designs = getDesigns();
       
-      if (!hash || hash === 'all') {
+      if (hash.startsWith('detail-')) {
+        const id = hash.split('-')[1];
+        renderDetailView(id);
+      } else if (!hash || hash === 'all') {
         renderGrid(designs, 'All Designs');
       } else if (hash === 'about') {
-        document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+        renderGrid(designs, 'All Designs');
+        document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' });
       } else {
-        const filtered = designs.filter(d => d.categories.some(c => c.toLowerCase() === hash));
+        const filtered = designs.filter(d => d.categories.some(c => c.toLowerCase() === hash.toLowerCase()));
         renderGrid(filtered, hash.charAt(0).toUpperCase() + hash.slice(1) + ' Designs');
       }
     }
