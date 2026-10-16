@@ -42,7 +42,6 @@
         <textarea id="description" rows="2" placeholder="Enter design details..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"></textarea>
       </div>
 
-      <!-- TAGS INPUT FIELD -->
       <div class="md:col-span-2">
         <label class="block text-sm font-semibold mb-1">Tags (Comma separated)</label>
         <input type="text" id="tags" placeholder="cricket, jersey, blue, sublimation" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
@@ -72,9 +71,10 @@
         <input type="number" id="price" step="0.01" placeholder="Ex: 2.99" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
       </div>
 
+      <!-- IMAGE FILE UPLOAD (LOCAL) -->
       <div>
-        <label class="block text-sm font-semibold mb-1">Preview Image URL</label>
-        <input type="url" id="imageUrl" required placeholder="https://example.com/image.jpg" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+        <label class="block text-sm font-semibold mb-1">Upload Preview Image (JPG/PNG)</label>
+        <input type="file" id="imageFile" accept="image/*" required class="w-full p-2 border rounded-lg bg-gray-50 text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
       </div>
 
       <div>
@@ -116,24 +116,31 @@
         return;
       }
 
-      const newDesign = {
-        id: Date.now(),
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        tags: document.getElementById('tags').value,
-        categories: selectedCategories,
-        type: document.getElementById('type').value,
-        price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
-        imageUrl: document.getElementById('imageUrl').value,
-        fileUrl: document.getElementById('fileUrl').value
-      };
+      const fileInput = document.getElementById('imageFile');
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(uploadEvent) {
+          const newDesign = {
+            id: Date.now(),
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            tags: document.getElementById('tags').value,
+            categories: selectedCategories,
+            type: document.getElementById('type').value,
+            price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
+            imageUrl: uploadEvent.target.result, // Base64 image data
+            fileUrl: document.getElementById('fileUrl').value
+          };
 
-      const currentDesigns = getDesigns();
-      currentDesigns.unshift(newDesign);
-      saveDesigns(currentDesigns);
+          const currentDesigns = getDesigns();
+          currentDesigns.unshift(newDesign);
+          saveDesigns(currentDesigns);
 
-      alert('Design Published Successfully!');
-      location.href = "index.html";
+          alert('Design Published Successfully!');
+          location.href = "index.html";
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
     }
   </script>
 </body>
