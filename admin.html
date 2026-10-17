@@ -33,7 +33,8 @@
         <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900"><i class="fa-solid fa-house"></i> Go to Home</a>
       </div>
 
-      <form onsubmit="handleFormSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Form ID சேர்க்கப்பட்டுள்ளது -->
+      <form id="designForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input type="hidden" id="editId">
         
         <div class="md:col-span-2">
@@ -52,14 +53,14 @@
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-semibold mb-2">Select Categories (Multiple Choice)</label>
-          <div class="flex flex-wrap gap-4 bg-gray-50 p-3 rounded-lg border">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Jersey" class="w-4 h-4 text-yellow-500 rounded"> Jersey</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Vector" class="w-4 h-4 text-yellow-500 rounded"> Vector</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Logo" class="w-4 h-4 text-yellow-500 rounded"> Logo</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Cricket" class="w-4 h-4 text-yellow-500 rounded"> Cricket</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="category" value="Football" class="w-4 h-4 text-yellow-500 rounded"> Football</label>
-          </div>
+          <label class="block text-sm font-semibold mb-2">Select Category</label>
+          <select id="category" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+            <option value="Jersey">Jersey</option>
+            <option value="Vector">Vector</option>
+            <option value="Logo">Logo</option>
+            <option value="Cricket">Cricket</option>
+            <option value="Football">Football</option>
+          </select>
         </div>
 
         <div>
@@ -78,141 +79,144 @@
         <div>
           <label class="block text-sm font-semibold mb-1">Upload Preview Image (JPG/PNG)</label>
           <input type="file" id="imageFile" accept="image/*" class="w-full p-2 border rounded-lg bg-gray-50 text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
-          <input type="hidden" id="existingImageUrl">
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">Downloadable File Link (Short Link / Drive)</label>
-          <input type="url" id="fileUrl" required placeholder="Short link / Drive link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+          <label class="block text-sm font-semibold mb-1">Downloadable File Link (Drive / Mega)</label>
+          <input type="url" id="fileUrl" required placeholder="File link" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
         </div>
 
         <div class="md:col-span-2 flex gap-2 mt-2">
           <button type="submit" id="submitBtn" class="flex-1 py-3 bg-yellow-500 text-slate-900 rounded-xl font-bold hover:bg-yellow-400 shadow text-base">Save & Publish Design</button>
-          <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300">Cancel</button>
         </div>
       </form>
     </div>
-
-    <!-- MANAGE EXISTING DESIGNS LIST -->
-    <div class="bg-white w-full p-6 rounded-2xl shadow-2xl">
-      <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-list text-yellow-500"></i> Manage Designs</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-100 text-xs uppercase text-gray-600">
-              <th class="p-3">Image</th>
-              <th class="p-3">Title</th>
-              <th class="p-3">Type</th>
-              <th class="p-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="manageTableBody" class="divide-y divide-gray-200 text-sm">
-            <!-- Dynamic rows -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 
-          <script type="module">
-  import { addDesignToFirebase } from './data.js';
+  <script type="module">
+    import { addDesignToFirebase } from './data.js';
 
-  // --- 1. GITHUB CONFIGURATION ---
-  const GITHUB_USERNAME = "free-vector-hub";
-  const REPO_NAME = "free-vector";
-  const GITHUB_TOKEN = "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"; // எ.கா: ghp_xxxxxxxxxxxx
+    // --- LOGIN FUNCTION ---
+    window.checkPassword = function(event) {
+      event.preventDefault();
+      const pass = document.getElementById('adminPass').value;
+      // உங்களது அட்மின் பாஸ்வேர்ட் இங்கே உள்ளது (தேவைப்பட்டால் மாற்றிக் கொள்ளலாம்)
+      if (pass === "admin123") {
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+      } else {
+        alert("Incorrect Password!");
+      }
+    };
 
-  // --- 2. GITHUB IMAGE UPLOAD FUNCTION ---
-  async function uploadImageToGitHub(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = async function(e) {
+    window.togglePriceInput = function() {
+      const type = document.getElementById('type').value;
+      const priceContainer = document.getElementById('priceContainer');
+      if (type === 'Paid') {
+        priceContainer.classList.remove('hidden');
+      } else {
+        priceContainer.classList.add('hidden');
+      }
+    };
+
+    // --- GITHUB CONFIGURATION ---
+    const GITHUB_USERNAME = "free-vector-hub";
+    const REPO_NAME = "free-vector";
+    const GITHUB_TOKEN = "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"; 
+
+    // --- GITHUB IMAGE UPLOAD FUNCTION ---
+    async function uploadImageToGitHub(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const base64Content = e.target.result.split(',')[1];
+            const fileName = `uploads/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${fileName}`;
+
+            const response = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                message: `Upload design image ${file.name}`,
+                content: base64Content,
+                branch: 'main'
+              })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${fileName}`;
+              resolve(rawUrl);
+            } else {
+              reject(new Error(data.message || "GitHub Upload Failed"));
+            }
+          } catch (err) {
+            reject(err);
+          }
+        };
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // --- FORM SUBMIT HANDLER ---
+    const designForm = document.getElementById("designForm");
+    if (designForm) {
+      designForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+        
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Uploading Image to GitHub...";
+
         try {
-          const base64Content = e.target.result.split(',')[1];
-          const fileName = `uploads/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-          
-          const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${fileName}`;
+          const imageFileInput = document.getElementById("imageFile");
+          const imageFile = imageFileInput.files[0];
 
-          const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `token ${GITHUB_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: `Upload design image ${file.name}`,
-              content: base64Content,
-              branch: 'main'
-            })
+          let imageUrl = "";
+          if (imageFile) {
+            imageUrl = await uploadImageToGitHub(imageFile);
+          } else {
+            alert("Please select an image file!");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Save & Publish Design";
+            return;
+          }
+
+          submitBtn.innerText = "Saving to Firebase Database...";
+
+          const designData = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            tags: document.getElementById("tags").value,
+            fileUrl: document.getElementById("fileUrl").value,
+            type: document.getElementById("type").value,
+            price: document.getElementById("price").value || "0",
+            categories: [document.getElementById("category").value],
+            imageUrl: imageUrl
+          };
+
+          addDesignToFirebase(designData, () => {
+            alert("Design Published Successfully with GitHub Image!");
+            designForm.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Save & Publish Design";
           });
 
-          const data = await response.json();
-          if (response.ok) {
-            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${fileName}`;
-            resolve(rawUrl);
-          } else {
-            reject(new Error(data.message || "GitHub Upload Failed"));
-          }
-        } catch (err) {
-          reject(err);
-        }
-      };
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // --- 3. FORM SUBMIT HANDLER ---
-  const designForm = document.getElementById("designForm");
-  if (designForm) {
-    designForm.addEventListener("submit", async function(event) {
-      event.preventDefault();
-      
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Uploading Image to GitHub...";
-
-      try {
-        const imageFileInput = document.getElementById("imageFileInput");
-        const imageFile = imageFileInput.files[0];
-
-        let imageUrl = "";
-        if (imageFile) {
-          // படத்தை GitHub-க்கு அனுப்பி Direct URL பெறுகிறோம்
-          imageUrl = await uploadImageToGitHub(imageFile);
-        }
-
-        submitBtn.innerText = "Saving to Firebase Database...";
-
-        // டேட்டாபேஸில் சேமிக்க வேண்டிய விவரங்கள்
-        const designData = {
-          title: document.getElementById("titleInput").value,
-          description: document.getElementById("descriptionInput").value,
-          fileUrl: document.getElementById("fileUrlInput").value,
-          type: document.getElementById("typeSelect").value,
-          price: document.getElementById("priceInput").value || "0",
-          categories: [document.getElementById("categorySelect").value],
-          imageUrl: imageUrl // GitHub-லிருந்து கிடைத்த சரியான URL
-        };
-
-        addDesignToFirebase(designData, () => {
-          alert("Design Published Successfully with GitHub Image!");
-          designForm.reset();
+        } catch (error) {
+          console.error(error);
+          alert("Error: " + error.message);
           submitBtn.disabled = false;
-          submitBtn.innerText = "Save & Publish";
-        });
-
-      } catch (error) {
-        console.error(error);
-        alert("Error: " + error.message);
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Save & Publish";
-      }
-    });
-  }
-</script>
-
+          submitBtn.innerText = "Save & Publish Design";
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
