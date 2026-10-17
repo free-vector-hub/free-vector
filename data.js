@@ -2,10 +2,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// உங்களது Firebase Config விபரங்கள்
+// உங்களது Firebase Config மற்றும் Database URL
 const firebaseConfig = {
   apiKey: "AIzaSyBJkEg71gt7vD3F0qE0nkKeuZPdrQbpxWY",
   authDomain: "vectorhub-2026.firebaseapp.com",
+  databaseURL: "https://vectorhub-2026-default-rtdb.firebaseio.com", // 👈 இதனை சேர்த்துள்ளோம்
   projectId: "vectorhub-2026",
   storageBucket: "vectorhub-2026.firebasestorage.app",
   messagingSenderId: "329737899852",
@@ -20,7 +21,7 @@ const designsRef = ref(db, 'designs');
 
 window.globalDesigns = [];
 
-// Realtime Database listener (தரவுகளை உடனுக்குடன் புதுப்பிக்க)
+// Realtime Database listener (உடனுக்குடன் தரவுகளை எடுக்க)
 export function listenToDesigns(callback) {
   onValue(designsRef, (snapshot) => {
     const data = snapshot.val();
@@ -32,6 +33,8 @@ export function listenToDesigns(callback) {
     }
     window.globalDesigns = list.reverse(); // புதியது மேலே வர
     if (callback) callback(window.globalDesigns);
+  }, (error) => {
+    console.error("Firebase Read Error: ", error);
   });
 }
 
