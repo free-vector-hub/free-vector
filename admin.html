@@ -118,22 +118,102 @@
           <script type="module">
   import { addDesignToFirebase, deleteDesignFromFirebase, listenToDesigns } from './data.js';
 
+  const SECRET_PASSWORD = "admin123"; // உங்களது பாஸ்வேர்ட்
+
+  // Global functions to be accessible by HTML inline events
+  window.checkPassword = function(e) {
+    e.preventDefault();
+    const pass = document.getElementById('adminPass').value;
+    if (pass === SECRET_PASSWORD) {
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      renderManageTable();
+    } else {
+      alert("Incorrect Password!");
+    }
+  };
+
+  window.togglePriceInput = function() {
+    const type = document.getElementById('type').value;
+    document.getElementById('priceContainer').classList.toggle('hidden', type !== 'Paid');
+  };
+
   // Realtime listener for Admin table
   listenToDesigns((designs) => {
-    if (typeof renderManageTable === 'function') {
+    window.allAdminDesigns = designs;
+    if (document.getElementById('adminPanel') && !document.getElementById('adminPanel').classList.contains('hidden')) {
       renderManageTable();
     }
   });
 
-  // Override Save Form to use Firebase
-  window.saveDesignDataToCloud = function(designObj) {
+  window.renderManageTable = function() {
+    const designs = window.allAdminDesigns || [];
+    const tbody = document.getElementById('manageTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+
+    if (designs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No designs uploaded yet.</td></tr>`;
+      return;
+    }
+
+    designs.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="p-3"><img src="${item.imageUrl}" class="w-12 h-10 object-cover rounded"></td>
+        <td class="p-3 font-semibold text-slate-800">${item.title}</td>
+        <td class="p-3"><span class="px-2 py-0.5 text-xs rounded ${item.type === 'Free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.type}</span></td>
+        <td class="p-3 text-center space-x-2">
+          <button onclick="editDesign('${item.firebaseId}')" class="px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 font-semibold text-xs"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button onclick="deleteDesignFromCloud('${item.firebaseId}')" class="px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 font-semibold text-xs"><i class="fa-solid fa-trash"></i> Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  };
+
+  window.handleFormSubmit = function(e) {
+    e.preventDefault();
+    const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+
+    if (selectedCategories.length === 0) {
+      alert('Please select at least one category!');
+      return;
+    }
+
+    const fileInput = document.getElementById('imageFile');
+    const existingImageUrl = document.getElementById('existingImageUrl').value;
+
+    if (fileInput.files && fileInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(uploadEvent) {
+        saveDesignToCloudObj(uploadEvent.target.result, selectedCategories);
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      saveDesignToCloudObj(existingImageUrl, selectedCategories);
+    }
+  };
+
+  function saveDesignToCloudObj(imageUrl, categories) {
+    const designObj = {
+      title: document.getElementById('title').value,
+      description: document.getElementById('description').value,
+      tags: document.getElementById('tags').value,
+      categories: categories,
+      type: document.getElementById('type').value,
+      price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
+      imageUrl: imageUrl,
+      fileUrl: document.getElementById('fileUrl').value
+    };
+
     addDesignToFirebase(designObj, () => {
       alert('Design Published Online Successfully!');
       resetForm();
     });
-  };
+  }
 
-  // Override Delete to use Firebase
   window.deleteDesignFromCloud = function(firebaseId) {
     if (confirm('Are you sure you want to delete this design?')) {
       deleteDesignFromFirebase(firebaseId, () => {
@@ -141,7 +221,21 @@
       });
     }
   };
+
+  window.resetForm = function() {
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('tags').value = '';
+    document.getElementById('type').value = 'Free';
+    document.getElementById('price').value = '';
+    document.getElementById('imageFile').value = '';
+    document.getElementById('existingImageUrl').value = '';
+    document.getElementById('fileUrl').value = '';
+    document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = false);
+    document.getElementById('priceContainer').classList.add('hidden');
+  };
 </script>
+
 
 </body>
 </html>
