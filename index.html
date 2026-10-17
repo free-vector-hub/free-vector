@@ -96,60 +96,59 @@
     </div>
   </footer>
 
-  <!-- MAIN APP ROUTING & FIREBASE INTEGRATION SCRIPT -->
+  <!-- SCRIPT FOR PURE IMAGE GALLERY & DETAILS -->
   <script type="module">
     import { listenToDesigns } from './data.js';
 
-    // Mobile Menu Toggle
     window.toggleMobileMenu = function() {
       const menu = document.getElementById('mobileMenu');
       menu.classList.toggle('hidden');
     };
 
-    // Main Routing Handler
     window.handleRoute = function() {
-      const hash = window.location.hash.replace('#', '').toLowerCase() || 'all';
+      const hash = window.location.hash;
       const container = document.getElementById('mainContainer');
       const designs = window.globalDesigns || [];
 
-      if (hash === 'about') {
+      if (hash.startsWith('#detail=')) {
+        const firebaseId = hash.replace('#detail=', '');
+        renderDetailPage(container, firebaseId, designs);
+        return;
+      }
+
+      if (hash === '#about') {
         renderAboutPage(container);
         return;
       }
 
-      // Filter designs based on Hash category
+      const cleanHash = hash.replace('#', '').toLowerCase() || 'all';
       let filtered = designs;
-      if (hash !== 'all') {
+      if (cleanHash !== 'all') {
         filtered = designs.filter(d => {
           if (Array.isArray(d.categories)) {
-            return d.categories.some(c => c.toLowerCase() === hash);
+            return d.categories.some(c => c.toLowerCase() === cleanHash);
           }
-          return d.tags && d.tags.toLowerCase().includes(hash);
+          return d.tags && d.tags.toLowerCase().includes(cleanHash);
         });
       }
 
-      renderGallery(container, filtered, hash);
+      renderPureImageGallery(container, filtered);
     };
 
-    // Render Designs Grid
-    function renderGallery(container, designs, currentCategory) {
-      const titleText = currentCategory === 'all' ? 'All Vector & Jersey Designs' : `${currentCategory.toUpperCase()} Designs`;
-
+    // Render Pure Image Gallery (Only Images with Free/Paid Badge)
+    function renderPureImageGallery(container, designs) {
       if (designs.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-16">
+          <div class="text-center py-20">
             <i class="fa-solid fa-folder-open text-5xl text-gray-300 mb-4"></i>
-            <h2 class="text-2xl font-bold text-gray-700 mb-2">${titleText}</h2>
-            <p class="text-gray-500">No designs found in this category yet.</p>
+            <h2 class="text-xl font-bold text-gray-700 mb-1">No Designs Found</h2>
+            <p class="text-gray-500 text-sm">No vector or jersey designs available in this category yet.</p>
           </div>
         `;
         return;
       }
 
       let html = `
-        <div class="mb-6">
-          <h2 class="text-2xl font-bold text-slate-800 capitalize border-b-2 border-yellow-400 inline-block pb-1">${titleText}</h2>
-        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       `;
 
@@ -159,21 +158,15 @@
         const priceText = isFree ? 'FREE' : `$${item.price || 'Paid'}`;
 
         html += `
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 overflow-hidden flex flex-col">
-            <div class="relative h-48 bg-gray-100">
-              <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover">
-              <span class="absolute top-2 right-2 ${badgeColor} text-xs font-bold px-2 py-1 rounded shadow">
-                ${priceText}
+          <div onclick="window.location.hash='#detail=${item.firebaseId}'" class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 group relative aspect-[4/3] sm:aspect-square">
+            <img src="${item.imageUrl}" alt="${item.title || 'Design'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <span class="absolute top-3 right-3 ${badgeColor} text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
+              ${priceText}
+            </span>
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+              <span class="bg-white/90 text-slate-900 font-semibold px-4 py-2 rounded-lg text-sm shadow-lg transform translate-y-2 group-hover:translate-y-0 transition duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-eye"></i> View Details
               </span>
-            </div>
-            <div class="p-4 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 class="font-bold text-slate-800 text-lg mb-1 line-clamp-1">${item.title}</h3>
-                <p class="text-gray-500 text-xs mb-3 line-clamp-2">${item.description || 'High quality vector graphic design.'}</p>
-              </div>
-              <a href="${item.fileUrl}" target="_blank" class="w-full text-center bg-slate-900 text-yellow-400 py-2 rounded-lg font-semibold hover:bg-slate-800 transition text-sm flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> Download Design
-              </a>
             </div>
           </div>
         `;
@@ -183,34 +176,42 @@
       container.innerHTML = html;
     }
 
-    // Render About Us Page
-    function renderAboutPage(container) {
-      container.innerHTML = `
-        <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <h1 class="text-3xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-vector-square text-yellow-500"></i> About VectorHub
-          </h1>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            VectorHub is a dedicated platform designed for graphic designers, sublimation printing shops, and sportswear creators. We offer high-quality vector graphics, cricket jerseys, football kits, and customized logos.
-          </p>
-          <p class="text-gray-600 leading-relaxed mb-6">
-            Our mission is to provide easily accessible vector resources to speed up your design workflow and elevation printing production.
-          </p>
-          <div class="border-t pt-4 text-sm text-gray-500">
-            For support or custom design inquiries, contact us at: <a href="mailto:support@vectorhub.store" class="text-yellow-600 font-semibold">support@vectorhub.store</a>
+    // Render Single Design Detail Page with Recommendations
+    function renderDetailPage(container, firebaseId, designs) {
+      const design = designs.find(d => d.firebaseId === firebaseId);
+
+      if (!design) {
+        container.innerHTML = `
+          <div class="text-center py-20">
+            <h2 class="text-2xl font-bold text-gray-700 mb-2">Design Not Found</h2>
+            <a href="#all" class="text-yellow-600 underline font-semibold">Back to Home</a>
           </div>
+        `;
+        return;
+      }
+
+      const isFree = design.type === 'Free';
+      const badgeColor = isFree ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900';
+      const priceText = isFree ? 'FREE' : `$${design.price || 'Paid'}`;
+
+      const recommendations = designs.filter(d => d.firebaseId !== firebaseId).slice(0, 4);
+
+      container.innerHTML = `
+        <div class="mb-4">
+          <a href="#all" class="text-sm text-gray-500 hover:text-yellow-600 flex items-center gap-1 font-medium">
+            <i class="fa-solid fa-arrow-left"></i> Back to Gallery
+          </a>
         </div>
-      `;
-    }
 
-    // Listen to hash changes (Category & Page clicks)
-    window.addEventListener('hashchange', window.handleRoute);
-
-    // Initialize Firebase Realtime listener
-    listenToDesigns((designs) => {
-      window.handleRoute();
-    });
-  </script>
-
-</body>
-</html>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div class="bg-gray-100 rounded-xl overflow-hidden h-80 md:h-[450px] relative">
+            <img src="${design.imageUrl}" alt="${design.title}" class="w-full h-full object-contain">
+            <span class="absolute top-4 right-4 ${badgeColor} text-sm font-bold px-3 py-1 rounded-lg shadow">
+              ${priceText}
+            </span>
+          </div>
+          <div class="flex flex-col justify-between">
+            <div>
+              <h1 class="text-3xl font-bold text-slate-900 mb-3">${design.title}</h1>
+              <div class="flex flex-wrap gap-2 mb-4">
+                ${Array.isArray(design.
