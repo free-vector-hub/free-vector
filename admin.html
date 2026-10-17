@@ -116,124 +116,101 @@
   </div>
 
           <script type="module">
-  import { addDesignToFirebase, deleteDesignFromFirebase, listenToDesigns } from './data.js';
+  import { addDesignToFirebase } from './data.js';
 
-  const SECRET_PASSWORD = "admin123"; // உங்களது பாஸ்வேர்ட்
+  // --- 1. GITHUB CONFIGURATION ---
+  const GITHUB_USERNAME = "free-vector-hub";
+  const REPO_NAME = "free-vector";
+  const GITHUB_TOKEN = "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"; // எ.கா: ghp_xxxxxxxxxxxx
 
-  // Global functions to be accessible by HTML inline events
-  window.checkPassword = function(e) {
-    e.preventDefault();
-    const pass = document.getElementById('adminPass').value;
-    if (pass === SECRET_PASSWORD) {
-      document.getElementById('loginBox').classList.add('hidden');
-      document.getElementById('adminPanel').classList.remove('hidden');
-      renderManageTable();
-    } else {
-      alert("Incorrect Password!");
-    }
-  };
-
-  window.togglePriceInput = function() {
-    const type = document.getElementById('type').value;
-    document.getElementById('priceContainer').classList.toggle('hidden', type !== 'Paid');
-  };
-
-  // Realtime listener for Admin table
-  listenToDesigns((designs) => {
-    window.allAdminDesigns = designs;
-    if (document.getElementById('adminPanel') && !document.getElementById('adminPanel').classList.contains('hidden')) {
-      renderManageTable();
-    }
-  });
-
-  window.renderManageTable = function() {
-    const designs = window.allAdminDesigns || [];
-    const tbody = document.getElementById('manageTableBody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-
-    if (designs.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No designs uploaded yet.</td></tr>`;
-      return;
-    }
-
-    designs.forEach(item => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="p-3"><img src="${item.imageUrl}" class="w-12 h-10 object-cover rounded"></td>
-        <td class="p-3 font-semibold text-slate-800">${item.title}</td>
-        <td class="p-3"><span class="px-2 py-0.5 text-xs rounded ${item.type === 'Free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.type}</span></td>
-        <td class="p-3 text-center space-x-2">
-          <button onclick="editDesign('${item.firebaseId}')" class="px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 font-semibold text-xs"><i class="fa-solid fa-pen"></i> Edit</button>
-          <button onclick="deleteDesignFromCloud('${item.firebaseId}')" class="px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 font-semibold text-xs"><i class="fa-solid fa-trash"></i> Delete</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  };
-
-  window.handleFormSubmit = function(e) {
-    e.preventDefault();
-    const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-
-    if (selectedCategories.length === 0) {
-      alert('Please select at least one category!');
-      return;
-    }
-
-    const fileInput = document.getElementById('imageFile');
-    const existingImageUrl = document.getElementById('existingImageUrl').value;
-
-    if (fileInput.files && fileInput.files[0]) {
+  // --- 2. GITHUB IMAGE UPLOAD FUNCTION ---
+  async function uploadImageToGitHub(file) {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = function(uploadEvent) {
-        saveDesignToCloudObj(uploadEvent.target.result, selectedCategories);
+      reader.onload = async function(e) {
+        try {
+          const base64Content = e.target.result.split(',')[1];
+          const fileName = `uploads/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+          
+          const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${fileName}`;
+
+          const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: `Upload design image ${file.name}`,
+              content: base64Content,
+              branch: 'main'
+            })
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${fileName}`;
+            resolve(rawUrl);
+          } else {
+            reject(new Error(data.message || "GitHub Upload Failed"));
+          }
+        } catch (err) {
+          reject(err);
+        }
       };
-      reader.readAsDataURL(fileInput.files[0]);
-    } else {
-      saveDesignToCloudObj(existingImageUrl, selectedCategories);
-    }
-  };
-
-  function saveDesignToCloudObj(imageUrl, categories) {
-    const designObj = {
-      title: document.getElementById('title').value,
-      description: document.getElementById('description').value,
-      tags: document.getElementById('tags').value,
-      categories: categories,
-      type: document.getElementById('type').value,
-      price: document.getElementById('type').value === 'Paid' ? document.getElementById('price').value : 0,
-      imageUrl: imageUrl,
-      fileUrl: document.getElementById('fileUrl').value
-    };
-
-    addDesignToFirebase(designObj, () => {
-      alert('Design Published Online Successfully!');
-      resetForm();
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
     });
   }
 
-  window.deleteDesignFromCloud = function(firebaseId) {
-    if (confirm('Are you sure you want to delete this design?')) {
-      deleteDesignFromFirebase(firebaseId, () => {
-        alert('Design deleted successfully!');
-      });
-    }
-  };
+  // --- 3. FORM SUBMIT HANDLER ---
+  const designForm = document.getElementById("designForm");
+  if (designForm) {
+    designForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Uploading Image to GitHub...";
 
-  window.resetForm = function() {
-    document.getElementById('title').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('tags').value = '';
-    document.getElementById('type').value = 'Free';
-    document.getElementById('price').value = '';
-    document.getElementById('imageFile').value = '';
-    document.getElementById('existingImageUrl').value = '';
-    document.getElementById('fileUrl').value = '';
-    document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = false);
-    document.getElementById('priceContainer').classList.add('hidden');
-  };
+      try {
+        const imageFileInput = document.getElementById("imageFileInput");
+        const imageFile = imageFileInput.files[0];
+
+        let imageUrl = "";
+        if (imageFile) {
+          // படத்தை GitHub-க்கு அனுப்பி Direct URL பெறுகிறோம்
+          imageUrl = await uploadImageToGitHub(imageFile);
+        }
+
+        submitBtn.innerText = "Saving to Firebase Database...";
+
+        // டேட்டாபேஸில் சேமிக்க வேண்டிய விவரங்கள்
+        const designData = {
+          title: document.getElementById("titleInput").value,
+          description: document.getElementById("descriptionInput").value,
+          fileUrl: document.getElementById("fileUrlInput").value,
+          type: document.getElementById("typeSelect").value,
+          price: document.getElementById("priceInput").value || "0",
+          categories: [document.getElementById("categorySelect").value],
+          imageUrl: imageUrl // GitHub-லிருந்து கிடைத்த சரியான URL
+        };
+
+        addDesignToFirebase(designData, () => {
+          alert("Design Published Successfully with GitHub Image!");
+          designForm.reset();
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Save & Publish";
+        });
+
+      } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save & Publish";
+      }
+    });
+  }
 </script>
 
 
