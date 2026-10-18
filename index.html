@@ -105,6 +105,16 @@
       menu.classList.toggle('hidden');
     };
 
+    // Listen to Firebase data and trigger routing on load/change
+    listenToDesigns((designs) => {
+      window.globalDesigns = designs;
+      handleRoute();
+    });
+
+    window.addEventListener('hashchange', () => {
+      handleRoute();
+    });
+
     window.handleRoute = function() {
       const hash = window.location.hash;
       const container = document.getElementById('mainContainer');
@@ -135,7 +145,7 @@
       renderPureImageGallery(container, filtered);
     };
 
-    // Render Pure Image Gallery (Only Images with Free/Paid Badge)
+    // Render Pure Image Gallery
     function renderPureImageGallery(container, designs) {
       if (designs.length === 0) {
         container.innerHTML = `
@@ -176,7 +186,7 @@
       container.innerHTML = html;
     }
 
-    // Render Single Design Detail Page with Recommendations
+    // Render Single Design Detail Page
     function renderDetailPage(container, firebaseId, designs) {
       const design = designs.find(d => d.firebaseId === firebaseId);
 
@@ -193,8 +203,6 @@
       const isFree = design.type === 'Free';
       const badgeColor = isFree ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900';
       const priceText = isFree ? 'FREE' : `$${design.price || 'Paid'}`;
-
-      const recommendations = designs.filter(d => d.firebaseId !== firebaseId).slice(0, 4);
 
       container.innerHTML = `
         <div class="mb-4">
@@ -213,5 +221,36 @@
           <div class="flex flex-col justify-between">
             <div>
               <h1 class="text-3xl font-bold text-slate-900 mb-3">${design.title}</h1>
-              <div class="flex flex-wrap gap-2 mb-4">
-                ${Array.isArray(design.
+              <p class="text-gray-600 text-base mb-6 leading-relaxed">${design.description || 'No description provided.'}</p>
+              <div class="mb-6">
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-2">Categories / Tags</span>
+                <span class="bg-gray-100 text-slate-700 px-3 py-1 rounded-md text-sm font-medium inline-block">${design.categories ? design.categories.join(', ') : 'General'}</span>
+              </div>
+            </div>
+            <div>
+              <a href="${design.fileUrl}" target="_blank" class="block w-full text-center py-3.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl shadow-lg transition text-base">
+                <i class="fa-solid fa-download mr-2"></i> Download Design File
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render About Page
+    function renderAboutPage(container) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-3xl mx-auto my-8">
+          <h1 class="text-3xl font-bold text-slate-900 mb-4">About VectorHub</h1>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            VectorHub is a premier platform created specifically for sports graphic designers, sublimation printing shops, and apparel creators. We provide high-quality vector graphics, jersey templates, and logo designs.
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            Our mission is to simplify the workflow for designers and printers by offering ready-to-use vector files and sublimation assets in one centralized hub.
+          </p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
