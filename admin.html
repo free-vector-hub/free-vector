@@ -181,7 +181,7 @@
             imageUrl: imageUrl // ImgBB-லிருந்து கிடைத்த சரியான URL இங்கே செல்கிறது
           };
 
-          addDesignDataToFirebase(designData, () => {
+          addDesignToFirebase(designData, () => {
             alert("Design Published Successfully with Image!");
             designForm.reset();
             submitBtn.disabled = false;
