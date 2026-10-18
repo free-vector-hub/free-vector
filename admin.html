@@ -121,7 +121,8 @@
   // --- IMGBB CONFIGURATION ---
   const IMGBB_API_KEY = "65084afc5235c6edfeaae7b01cb7cc41"; // இங்கே உங்கள் ImgBB API Key-ஐ போடவும்
 
-  // --- IMGBB IMAGE UPLOAD FUNCTION ---
+  
+  // --- IMGBB IMAGE UPLOAD FUNCTION (UPDATED & FIXED) ---
   async function uploadImageToImgBB(file) {
     const formData = new FormData();
     formData.append("image", file);
@@ -132,70 +133,76 @@
     });
 
     const data = await response.json();
-    if (data.success) {
-      return data.data.url; // ImgBB வழங்கும் நேரடி இமேஜ் URL
+    console.log("ImgBB API Response:", data); // கன்சோலில் சரிபார்க்க
+
+    if (data.success && data.data) {
+      // ImgBB வழங்கும்Direct Image URL (url அல்லது display_url)
+      return data.data.url || data.data.display_url;
     } else {
-      throw new Error((data.error && data.error.message) || "ImgBB Upload Failed");
+      const errorMsg = data.error ? data.error.message : "ImgBB Upload Failed";
+      throw new Error(errorMsg);
     }
   }
 
       // --- FORM SUBMIT HANDLER ---
-    const designForm = document.getElementById("designForm");
-    if (designForm) {
-      designForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-        
-        const submitBtn = document.getElementById("submitBtn");
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Uploading Image to ImgBB...";
+      const designForm = document.getElementById("designForm");
+  if (designForm) {
+    designForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Uploading Image to ImgBB...";
 
-        try {
-          const imageFileInput = document.getElementById("imageFile");
-          
-          if (!imageFileInput || imageFileInput.files.length === 0) {
-            alert("Please select an image file!");
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Save & Publish Design";
-            return;
-          }
+      try {
+        const imageFileInput = document.getElementById("imageFile");
+        const imageFile = imageFileInput.files[0];
 
-          const imageFile = imageFileInput.files[0];
-          
-          // ImgBB-க்கு படத்தை அனுப்பி URL-ஐ பெறுகிறோம்
-          const imageUrl = await uploadImageToImgBB(imageFile);
-          
-          if (!imageUrl) {
-            throw new Error("Failed to get Image URL from ImgBB");
-          }
-
-          submitBtn.innerText = "Saving to Firebase Database...";
-
-          const designData = {
-            title: document.getElementById("title").value,
-            description: document.getElementById("description").value,
-            tags: document.getElementById("tags").value,
-            fileUrl: document.getElementById("fileUrl").value,
-            type: document.getElementById("type").value,
-            price: document.getElementById("price").value || "0",
-            categories: [document.getElementById("category").value],
-            imageUrl: imageUrl // ImgBB-லிருந்து கிடைத்த சரியான URL இங்கே செல்கிறது
-          };
-
-          addDesignToFirebase(designData, () => {
-            alert("Design Published Successfully with Image!");
-            designForm.reset();
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Save & Publish Design";
-          });
-
-        } catch (error) {
-          console.error(error);
-          alert("Error: " + error.message);
+        if (!imageFile) {
+          alert("Please select an image file!");
           submitBtn.disabled = false;
           submitBtn.innerText = "Save & Publish Design";
+          return;
         }
-      });
-    }
+
+        // ImgBB-க்கு அனுப்பி URL-ஐப் பெறுகிறோம்
+        const uploadedImageUrl = await uploadImageToImgBB(imageFile);
+        
+        console.log("Uploaded Image URL:", uploadedImageUrl);
+
+        if (!uploadedImageUrl) {
+          throw new Error("Image URL is empty from ImgBB!");
+        }
+
+        submitBtn.innerText = "Saving to Firebase Database...";
+
+        const designData = {
+          title: document.getElementById("title").value,
+          description: document.getElementById("description").value,
+          tags: document.getElementById("tags").value,
+          fileUrl: document.getElementById("fileUrl").value,
+          type: document.getElementById("type").value,
+          price: document.getElementById("price").value || "0",
+          categories: [document.getElementById("category").value],
+          imageUrl: uploadedImageUrl // இங்கிருந்தே Firebase-க்குச் செல்லும்
+        };
+
+        addDesignToFirebase(designData, () => {
+          alert("Design Published Successfully with ImgBB Image URL!");
+          designForm.reset();
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Save & Publish Design";
+        });
+
+      } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save & Publish Design";
+      }
+    });
+  }
+
 
 </script>
 
