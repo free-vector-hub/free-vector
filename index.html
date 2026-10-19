@@ -186,7 +186,7 @@
       container.innerHTML = html;
     }
 
-    // Render Single Design Detail Page
+        // Render Single Design Detail Page with Share, Favorite & Recommendations
     function renderDetailPage(container, firebaseId, designs) {
       const design = designs.find(d => d.firebaseId === firebaseId);
 
@@ -204,6 +204,9 @@
       const badgeColor = isFree ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900';
       const priceText = isFree ? 'FREE' : `$${design.price || 'Paid'}`;
 
+      // Recommended designs (Other designs excluding current one)
+      const recommendations = designs.filter(d => d.firebaseId !== firebaseId).slice(0, 4);
+
       container.innerHTML = `
         <div class="mb-4">
           <a href="#all" class="text-sm text-gray-500 hover:text-yellow-600 flex items-center gap-1 font-medium">
@@ -211,6 +214,7 @@
           </a>
         </div>
 
+        <!-- MAIN DETAIL SECTION -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div class="bg-gray-100 rounded-xl overflow-hidden h-80 md:h-[450px] relative">
             <img src="${design.imageUrl}" alt="${design.title}" class="w-full h-full object-contain">
@@ -220,22 +224,94 @@
           </div>
           <div class="flex flex-col justify-between">
             <div>
-              <h1 class="text-3xl font-bold text-slate-900 mb-3">${design.title}</h1>
+              <div class="flex justify-between items-start gap-4 mb-3">
+                <h1 class="text-3xl font-bold text-slate-900">${design.title}</h1>
+                <!-- Favorite Button -->
+                <button onclick="toggleFavorite('${design.firebaseId}')" id="favBtn-${design.firebaseId}" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-yellow-100 text-gray-600 hover:text-yellow-600 flex items-center justify-center transition text-lg shadow-sm">
+                  <i class="fa-regular fa-heart"></i>
+                </button>
+              </div>
+
               <p class="text-gray-600 text-base mb-6 leading-relaxed">${design.description || 'No description provided.'}</p>
+              
               <div class="mb-6">
-                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-2">Categories / Tags</span>
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-2">Categories</span>
                 <span class="bg-gray-100 text-slate-700 px-3 py-1 rounded-md text-sm font-medium inline-block">${design.categories ? design.categories.join(', ') : 'General'}</span>
               </div>
             </div>
-            <div>
+
+            <div class="space-y-3">
               <a href="${design.fileUrl}" target="_blank" class="block w-full text-center py-3.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl shadow-lg transition text-base">
                 <i class="fa-solid fa-download mr-2"></i> Download Design File
               </a>
+              
+              <!-- Share Button -->
+              <button onclick="shareDesign('${design.title}')" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition text-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes"></i> Share This Design
+              </button>
             </div>
+          </div>
+        </div>
+
+        <!-- RECOMMENDED DESIGNS SECTION -->
+        <div class="mt-12">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-fire text-yellow-500"></i> Recommended Designs
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="recommendContainer">
+            ${recommendations.length > 0 ? recommendations.map(item => {
+              const recFree = item.type === 'Free';
+              const recBadge = recFree ? 'bg-green-500 text-white' : 'bg-yellow-500 text-slate-900';
+              const recPrice = recFree ? 'FREE' : `$${item.price || 'Paid'}`;
+              return `
+                <div onclick="window.location.hash='#detail=${item.firebaseId}'" class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 group relative aspect-[4/3] sm:aspect-square">
+                  <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                  <span class="absolute top-3 right-3 ${recBadge} text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
+                    ${recPrice}
+                  </span>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                    <span class="bg-white/90 text-slate-900 font-semibold px-4 py-2 rounded-lg text-sm shadow-lg transform translate-y-2 group-hover:translate-y-0 transition duration-300 flex items-center gap-2">
+                      <i class="fa-solid fa-eye"></i> View Details
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('') : '<p class="text-gray-500 text-sm">No recommendations available.</p>'}
           </div>
         </div>
       `;
     }
+
+    // Helper Functions for Share and Favorite
+    window.shareDesign = function(title) {
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: `Check out this amazing design on VectorHub: ${title}`,
+          url: window.location.href,
+        }).catch(console.error);
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Design link copied to clipboard!");
+      }
+    };
+
+    window.toggleFavorite = function(firebaseId) {
+      const btn = document.getElementById(`favBtn-${firebaseId}`);
+      const icon = btn.querySelector('i');
+      if (icon.classList.contains('fa-regular')) {
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid');
+        icon.style.color = '#ef4444'; // Red heart
+        alert("Added to your favorites!");
+      } else {
+        icon.classList.remove('fa-solid');
+        icon.classList.add('fa-regular');
+        icon.style.color = '';
+        alert("Removed from your favorites!");
+      }
+    };
+
 
     // Render About Page
     function renderAboutPage(container) {
