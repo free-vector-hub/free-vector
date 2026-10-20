@@ -79,7 +79,11 @@
         <h3 class="text-white font-bold text-base mb-3 border-l-2 border-yellow-500 pl-2">Support</h3>
         <ul class="space-y-2 text-sm">
           <li><a href="#about" class="hover:text-yellow-400 transition">About Us</a></li>
-          <li><a href="#about" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
+<li><a href="#privacy" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
+<li><a href="#disclaimer" class="hover:text-yellow-400 transition">Disclaimer</a></li>
+<li><a href="#terms" class="hover:text-yellow-400 transition">Terms & Conditions</a></li>
+<li><a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a></li>
+
         </ul>
       </div>
       <div>
@@ -127,9 +131,26 @@
       }
 
       if (hash === '#about') {
-        renderAboutPage(container);
-        return;
+  renderAboutPage(container);
+  return;
+}
+if (hash === '#privacy') {
+  renderPrivacyPage(container);
+  return;
+}
+if (hash === '#disclaimer') {
+  renderDisclaimerPage(container);
+  return;
+}
+if (hash === '#terms') {
+  renderTermsPage(container);
+  return;
+}
+      if (hash === '#contact') {
+  renderTermsPage(container);
+  return;
       }
+
 
       const cleanHash = hash.replace('#', '').toLowerCase() || 'all';
       let filtered = designs;
@@ -327,6 +348,111 @@
         </div>
       `;
     }
+        function renderAboutPage(container) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto my-8 space-y-6">
+          <h1 class="text-3xl font-bold text-slate-900 mb-4 border-b pb-3">About Us - VectorHub</h1>
+          
+          <p class="text-gray-600 leading-relaxed">
+            Welcome to <strong class="text-slate-900">VectorHub</strong>, your ultimate destination for high-quality sports graphic designs, sublimation jersey templates, and vector assets. Founded with a passion for digital creativity and sports apparel design, our platform serves as a bridge between talented graphic designers and custom printing businesses.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">Our Mission</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Our mission is to empower sublimation printing shops, graphic designers, and sports enthusiasts by providing ready-to-use, top-tier vector graphics and jersey designs. We strive to simplify the design workflow, saving time and effort for creators worldwide.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">What We Offer</h3>
+          <ul class="list-disc pl-5 space-y-2 text-gray-600">
+            <li><strong>Sublimation Jersey Designs:</strong> Premium layouts for cricket, football, and other sports jerseys.</li>
+            <li><strong>Vector Graphics:</strong> Scalable vector artwork suitable for printing, branding, and digital media.</li>
+            <li><strong>Free & Paid Resources:</strong> Access to a wide variety of free downloads alongside exclusive paid professional designs.</li>
+          </ul>
+
+          <p class="text-gray-600 leading-relaxed pt-2">
+            Thank you for choosing VectorHub as your trusted design partner. If you have any questions or collaboration inquiries, feel free to reach out to us at <span class="text-yellow-600 font-semibold">support@vectorhub.store</span>.
+          </p>
+        </div>
+      `;
+    }
+    function renderPrivacyPage(container) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto my-8 space-y-6">
+          <h1 class="text-3xl font-bold text-slate-900 mb-4 border-b pb-3">Privacy Policy</h1>
+          <p class="text-sm text-gray-400">Last updated: 2026</p>
+
+          <p class="text-gray-600 leading-relaxed">
+            At <strong class="text-slate-900">VectorHub</strong>, accessible from vectorhub.store, safeguarding your privacy is a top priority. This Privacy Policy document outlines the types of information collected and recorded by VectorHub and how we utilize it.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">Information We Collect</h3>
+          <p class="text-gray-600 leading-relaxed">
+            When you visit our platform, we may collect basic technical data such as your IP address, browser type, device information, and pages visited. If you use our admin panel or interactive features, data is stored securely via Firebase Realtime Database.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">How We Use Your Information</h3>
+          <ul class="list-disc pl-5 space-y-2 text-gray-600">
+            <li>To operate, maintain, and improve our website and design gallery.</li>
+            <li>To understand how users interact with our vector and jersey resources.</li>
+            <li>To communicate with users regarding support, updates, or security.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">Cookies and Web Beacons</h3>
+          <p class="text-gray-600 leading-relaxed">
+            VectorHub uses standard cookies to store visitor preferences and to optimize user experience based on browser types.
+          </p>
+        </div>
+      `;
+    }
+    function renderDisclaimerPage(container) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto my-8 space-y-6">
+          <h1 class="text-3xl font-bold text-slate-900 mb-4 border-b pb-3">Disclaimer</h1>
+          
+          <p class="text-gray-600 leading-relaxed">
+            The information and downloadable design assets provided on <strong class="text-slate-900">VectorHub</strong> (vectorhub.store) are for general informational and creative purposes only. All vectors, jersey templates, and graphics are provided on an "as is" basis without warranties of any kind.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">External Links Disclaimer</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Our platform may contain links to external file-sharing services (such as Google Drive, Mega, etc.) or third-party websites. We do not guarantee the accuracy, relevance, or reliability of any information on these external sites.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">Professional Use</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Users are advised to check print resolutions, color profiles (CMYK/RGB), and licensing requirements before using any vector or jersey template for commercial sublimation printing. VectorHub is not liable for any printing errors or commercial losses incurred.
+          </p>
+        </div>
+      `;
+    }
+    function renderTermsPage(container) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto my-8 space-y-6">
+          <h1 class="text-3xl font-bold text-slate-900 mb-4 border-b pb-3">Terms & Conditions</h1>
+          <p class="text-sm text-gray-400">Last updated: 2026</p>
+
+          <p class="text-gray-600 leading-relaxed">
+            Welcome to VectorHub. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions. Please read them carefully.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">1. Use of Design Assets</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Designs downloaded from VectorHub (both free and paid) are meant for personal or commercial apparel printing and graphic design use. You are strictly prohibited from reselling, redistributing, or claiming ownership of the raw vector files on other stock platforms.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">2. User Conduct</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Visitors and administrators must ensure that no malicious scripts, unauthorized content, or copyright-infringing materials are uploaded through the platform.
+          </p>
+
+          <h3 class="text-xl font-bold text-slate-900 pt-2">3. Changes to Terms</h3>
+          <p class="text-gray-600 leading-relaxed">
+            VectorHub reserves the right to modify or replace these Terms at any time. Continued use of the website after changes constitutes acceptance of the new terms.
+          </p>
+        </div>
+      `;
+    }
+
   </script>
 </body>
 </html>
